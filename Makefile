@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/15 13:46:58 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/02/22 13:55:40 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ HDRS		=	$(addprefix $(HDRSDIR)/, rtv1.h)
 
 SRCSDIR		=	./sources
 
-SRCS		=	main.c
+SRCS		=	main.c events.c fps.c
 
 OBJDIR		=	./obj
 

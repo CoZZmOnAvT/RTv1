@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sgl_resize_window.c                                :+:      :+:    :+:   */
+/*   events.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/09 20:07:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/01/10 21:48:42 by pgritsen         ###   ########.fr       */
+/*   Created: 2018/02/21 14:01:53 by pgritsen          #+#    #+#             */
+/*   Updated: 2018/02/21 14:19:28 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "sgl_private.h"
+#include "rtv1.h"
 
-void	sgl_resize_window(t_uint wind_id, int new_width, int new_height)
+int		poll_events(t_env *env)
 {
-	t_sgl_window	*win;
+	SDL_Event	e;
 
-	if (!(win = sgl_get_window_by_id(wind_id)))
-		return ;
-	win->width = new_width;
-	win->height = new_height;
-	!(win->surface = SDL_GetWindowSurface(win->p))
-		? s_err_handler("SDL", SDL_GetError(), 0, 1) : 0;
+	(void)env;
+	while (SDL_PollEvent(&e))
+		if (e.window.event == SDL_WINDOWEVENT_CLOSE
+			|| (e.type == SDL_KEYDOWN && e.key.keysym.sym == EXIT_KEY))
+			return (0);
+	return (1);
 }

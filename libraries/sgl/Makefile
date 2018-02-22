@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/09 17:33:17 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/02/22 14:51:46 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,8 +20,8 @@ HDRS		=	sgl.h sgl_private.h
 
 SRCS		=	sgl_draw_line.c sgl_plot.c sgl_new_window.c sgl_get_window.c	\
 				sgl_init.c sgl_get_font.c sgl_add_font.c sgl_quit.c				\
-				sgl_draw_str.c sgl_get_window_by_id.c sgl_resize_window.c		\
-				s_sys_handler.c sgl_vsync.c sgl_get.c sgl_blit_line.c
+				sgl_draw_str.c sgl_get_window_by_id.c s_sys_handler.c			\
+				sgl_vsync.c sgl_get.c
 
 OBJDIR		=	obj
 
@@ -47,7 +47,7 @@ $(OBJDIR):
 	@mkdir $(OBJDIR)
 	@printf "\033[32m[DONE]\033[0m\n"
 
-$(OBJ): $(OBJDIR)/%.o : %.c
+$(OBJ): $(OBJDIR)/%.o : %.c $(HDRS)
 	@printf "\033[32m[Compiling $<].......\033[0m"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
 	@printf "\033[32m[DONE]\033[0m\n"

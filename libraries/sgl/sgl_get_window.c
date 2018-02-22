@@ -6,13 +6,13 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 17:56:38 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/01/09 19:00:04 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/21 14:27:03 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sgl_private.h"
 
-t_sgl_window	*sgl_get_window(char *title)
+t_sgl_window	*sgl_get_window(const char *title)
 {
 	t_wlist			*win;
 	t_sgl_window	*tmp;

@@ -6,18 +6,19 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 16:10:00 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/01/12 12:11:57 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/22 14:19:09 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sgl_private.h"
 
-void	sgl_draw_str(char *string, t_font *font_data,
-						t_point align, SDL_Surface *surface)
+void	sgl_draw_str(const char *string, t_font *font_data,
+						t_point align, SDL_Renderer *rend)
 {
 	TTF_Font	*font;
 	SDL_Color	color;
 	SDL_Surface	*text_surf;
+	SDL_Texture	*messg;
 
 	if (!(font = sgl_get_font(font_data)))
 		return ;
@@ -26,7 +27,9 @@ void	sgl_draw_str(char *string, t_font *font_data,
 						.b = font_data->color % 256,
 						.a = font_data->color / 0x1000000 % 256};
 	text_surf = TTF_RenderUTF8_Blended(font, string, color);
-	SDL_BlitSurface(text_surf, NULL, surface,
-					&(SDL_Rect){(int)align.x, (int)align.y, 0, 0});
+	messg = SDL_CreateTextureFromSurface(rend, text_surf);
+	SDL_RenderCopy(rend, messg, NULL,
+		&(SDL_Rect){(int)align.x, (int)align.y, text_surf->w, text_surf->h});
+	SDL_DestroyTexture(messg);
 	SDL_FreeSurface(text_surf);
 }
