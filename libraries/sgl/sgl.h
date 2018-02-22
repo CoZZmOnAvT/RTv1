@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 14:58:09 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/22 15:56:30 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,19 +70,18 @@ typedef struct	s_window
 	t_uint			id;
 	SDL_Window		*p;
 	SDL_Renderer	*rend;
-	SDL_Texture		*tex;
 }				t_sgl_window;
 
 void			sgl_init(void);
 
 int				sgl_quit(void);
 
-void			sgl_plot(t_point p, t_uint color, SDL_Texture *tex);
+void			sgl_plot(t_point p, t_uint color, SDL_Renderer *rend);
 
 t_uint			sgl_get(SDL_Texture *tex, int x, int y);
 
 void			sgl_draw_line(t_point a, t_point b, t_uint color,
-								SDL_Texture *tex);
+								 SDL_Renderer *rend);
 
 void			sgl_draw_str(const char *string, t_font *font_data,
 								t_point align, SDL_Renderer *rend);
@@ -90,8 +89,8 @@ void			sgl_draw_str(const char *string, t_font *font_data,
 t_sgl_window	*sgl_new_window(const char *title, int width,
 								int height, t_uint wm);
 
-void			sgl_resize_window(t_uint wind_id, int new_width,
-												int new_height);
+void			sgl_win_resize(t_uint win_id, t_uint new_width,
+								t_uint new_height);
 
 t_sgl_window	*sgl_get_window(const char *title);
 

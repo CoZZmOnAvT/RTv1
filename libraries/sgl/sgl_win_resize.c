@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sgl_plot.c                                         :+:      :+:    :+:   */
+/*   sgl_win_resize.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/08 18:37:34 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 15:51:17 by pgritsen         ###   ########.fr       */
+/*   Created: 2018/02/22 15:11:53 by pgritsen          #+#    #+#             */
+/*   Updated: 2018/02/22 15:56:16 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sgl_private.h"
 
-inline void		sgl_plot(t_point p, t_uint color, SDL_Renderer *rend)
+void	sgl_win_resize(t_uint win_id, t_uint new_width, t_uint new_height)
 {
-	SDL_Color	tmp;
-	int			dx;
-	int			dy;
+	t_sgl_window	*win;
 
-	SDL_GetRenderDrawColor(rend, &tmp.r, &tmp.g, &tmp.b, &tmp.a);
-	SDL_SetRenderDrawColor(rend, color >> 16 & 0xFF, color >> 8 & 0xFF,
-									color & 0xFF, color >> 24 & 0xFF);
-	dx = ROUND(p.x);
-	dy = ROUND(p.y);
-	SDL_RenderDrawPoint(rend, p.x, p.y);
-	SDL_SetRenderDrawColor(rend, tmp.r, tmp.g, tmp.b, tmp.a);
+	win = sgl_get_window_by_id(win_id);
+	win->w = new_width;
+	win->h = new_height;
 }

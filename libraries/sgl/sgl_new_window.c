@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 13:57:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 13:54:05 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/22 15:55:17 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ t_sgl_window	*sgl_new_window(const char *title, int width,
 		s_err_handler(ICON_PATH, "File doesn't exist", 0, 0);
 	SDL_SetWindowIcon(new->p, icon);
 	SDL_FreeSurface(icon);
-	new->tex = SDL_CreateTexture(new->rend, SDL_PIXELFORMAT_ARGB8888,
-		SDL_TEXTUREACCESS_STREAMING, width, height);
 	ft_dlstpush(&g_win_list, ft_dlstnew(&new, sizeof(new)));
 	return (new);
 }
