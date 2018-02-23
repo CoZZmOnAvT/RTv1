@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 15:56:30 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/23 20:29:48 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,15 +70,21 @@ typedef struct	s_window
 	t_uint			id;
 	SDL_Window		*p;
 	SDL_Renderer	*rend;
+	SDL_Texture		*tex;
+	SDL_Surface		*surf;
 }				t_sgl_window;
 
 void			sgl_init(void);
 
 int				sgl_quit(void);
 
-void			sgl_plot(t_point p, t_uint color, SDL_Renderer *rend);
+void			sgl_plot_rend(t_point p, t_uint color, SDL_Renderer *rend);
 
-t_uint			sgl_get(SDL_Texture *tex, int x, int y);
+void			sgl_plot_surf(t_point p, t_uint color, SDL_Surface *surf);
+
+t_uint			sgl_get_tex(SDL_Texture *tex, int x, int y);
+
+t_uint			sgl_get_surf(SDL_Surface *surf, int x, int y);
 
 void			sgl_draw_line(t_point a, t_point b, t_uint color,
 								 SDL_Renderer *rend);

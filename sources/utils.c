@@ -1,30 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sgl_get.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/02 12:32:21 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 14:55:43 by pgritsen         ###   ########.fr       */
+/*   Created: 2018/02/23 14:16:00 by pgritsen          #+#    #+#             */
+/*   Updated: 2018/02/23 22:01:19 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "sgl_private.h"
+#include "rtv1.h"
 
-inline t_uint	sgl_get(SDL_Texture *tex, int x, int y)
+void	init_env(t_env *env)
 {
-	t_uint	*pixels;
-	t_uint	pixel;
-	int		width;
-	int		height;
-
-	SDL_QueryTexture(tex, NULL, NULL, &width, &height);
-	SDL_LockTexture(tex, NULL, (void **)&pixels, (int *)&pixel);
-	if (y >= 0 && y < height && x >= 0 && x < width)
-		pixel = pixels[y * width + x];
-	else
-		pixel = 0x000000;
-	SDL_UnlockTexture(tex);
-	return (pixel);
+	ft_bzero(env, sizeof(t_env));
+	env->win = sgl_new_window(PROGRAM_NAME, W_WIDTH, W_HEIGHT,
+								SDL_WINDOW_RESIZABLE);
+	env->cam = ft_memalloc(sizeof(t_cam));
+	env->cam->vwp = ft_memalloc(sizeof(t_viewport));
+	env->cam->vwp->w = 1.0;
+	env->cam->vwp->h = 1.0;
+	env->cam->vwp->dist = 1;
 }

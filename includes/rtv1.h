@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 14:05:31 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 00:09:38 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,81 @@
 
 # include <stdio.h>
 # include <time.h>
+# include <errno.h>
+# include <OpenCl/OpenCl.h>
 # include "sgl.h"
 
 # define PROGRAM_NAME "RTv1"
 
+# define KERNEL_FOLDER "./resources/kernels/"
+
+# define W_WIDTH 1024
+# define W_HEIGHT 1024
+
 # define EXIT_KEY SDLK_ESCAPE
+
+typedef struct	s_cl_core
+{
+	cl_device_id		device;
+	cl_context			context;
+	cl_command_queue	queue;
+}				t_cl_core;
+
+typedef struct	s_cl_kl
+{
+	cl_program			program;
+	cl_kernel			kernel;
+	cl_mem				mem;
+}				t_cl_kl;
+
+typedef struct	s_light
+{
+	char	type;
+	double	intens;
+	t_point	pos;
+	t_point	dir;
+}				t_light;
+
+typedef struct	s_obj
+{
+	t_uint	color;
+	t_point	pos;
+	double	rad;
+}				t_obj;
+
+typedef struct	s_viewport
+{
+	double	w;
+	double	h;
+	double	dist;
+}				t_viewport;
 
 typedef struct	s_cam
 {
 	t_point		pos;
 	t_rotate	rot;
-	SDL_Surface	*surf;
+	t_cl_kl		kl;
+	t_viewport	*vwp;
 }				t_cam;
 
 typedef struct	s_env
 {
+	t_cl_core		cl;
 	t_sgl_window	*win;
 	t_cam			*cam;
+	cl_mem			objs;
+	cl_mem			light;
 }				t_env;
+
+extern t_obj	objs[];
+extern t_light	light[];
+
+/*
+**				Draw.c
+**				↓↓↓↓↓↓
+*/
+
+void			render_scene(t_env *env);
 
 /*
 **				Events.c
@@ -47,5 +104,32 @@ int				poll_events(t_env *env);
 */
 
 void			display_fps(SDL_Renderer *rend);
+
+/*
+**				Utils.c
+**				↓↓↓↓↓↓↓
+*/
+
+void			init_env(t_env *env);
+
+/*
+**				OpenCl.c
+**				↓↓↓↓↓↓↓↓
+*/
+
+void			cl_reinit_mem(t_cl_core *cl, t_cl_kl *kl, size_t size);
+
+void			cl_init(t_cl_core *cl, cl_device_type dev_type);
+
+void			cl_parse_kernel(t_cl_core *cl, t_cl_kl *kl,
+						const char *kernel_name, const char *func_name);
+
+/*
+**				Sys_handler.c
+**				↓↓↓↓↓↓↓↓↓↓↓↓↓
+*/
+
+void			ft_err_handler(const char *msg, const char *add,
+								int err, t_uchar stop);
 
 #endif

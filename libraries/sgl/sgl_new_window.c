@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 13:57:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 15:55:17 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/23 20:17:08 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ t_sgl_window	*sgl_new_window(const char *title, int width,
 	new->title = ft_strdup(title);
 	if (SDL_CreateWindowAndRenderer(width, height, wm, &new->p, &new->rend))
 		s_err_handler("SDL", SDL_GetError(), 0, 1);
+	!(new->surf = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0))
+		? s_err_handler("SDL", SDL_GetError(), 0, 1) : 0;
+	!(new->tex = SDL_CreateTexture(new->rend, SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING, width, height))
+		? s_err_handler("SDL", SDL_GetError(), 0, 1) : 0;
 	SDL_SetWindowTitle(new->p, title);
 	new->id = SDL_GetWindowID(new->p);
 	if (!(icon = IMG_Load(ICON_PATH)))

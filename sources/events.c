@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 14:01:53 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 15:55:43 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/23 22:34:45 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int		poll_events(t_env *env)
 {
 	SDL_Window	*win;
-	static char		full_screen;
+	static char	full_screen;
 	SDL_Event	e;
 
 	(void)env;
@@ -31,6 +31,10 @@ int		poll_events(t_env *env)
 				SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		}
 		else if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+		{
 			sgl_win_resize(e.window.windowID, e.window.data1, e.window.data2);
+			cl_reinit_mem(&env->cl, &env->cam->kl,
+							e.window.data1 * e.window.data2 * 4);
+		}
 	return (1);
 }

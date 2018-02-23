@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sgl_plot.c                                         :+:      :+:    :+:   */
+/*   sgl_get_surf.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/08 18:37:34 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/22 15:51:17 by pgritsen         ###   ########.fr       */
+/*   Created: 2018/02/23 20:21:15 by pgritsen          #+#    #+#             */
+/*   Updated: 2018/02/23 20:25:06 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sgl_private.h"
 
-inline void		sgl_plot(t_point p, t_uint color, SDL_Renderer *rend)
+t_uint	sgl_get_surf(SDL_Surface *surf, int x, int y)
 {
-	SDL_Color	tmp;
-	int			dx;
-	int			dy;
+	t_uint	pixel;
 
-	SDL_GetRenderDrawColor(rend, &tmp.r, &tmp.g, &tmp.b, &tmp.a);
-	SDL_SetRenderDrawColor(rend, color >> 16 & 0xFF, color >> 8 & 0xFF,
-									color & 0xFF, color >> 24 & 0xFF);
-	dx = ROUND(p.x);
-	dy = ROUND(p.y);
-	SDL_RenderDrawPoint(rend, p.x, p.y);
-	SDL_SetRenderDrawColor(rend, tmp.r, tmp.g, tmp.b, tmp.a);
+	if (y >= 0 && y < surf->h && x >= 0 && x < surf->w)
+		pixel = ((t_uint *)surf->pixels)[y * surf->w + x];
+	else
+		pixel = 0x000000;
+	return (pixel);
 }

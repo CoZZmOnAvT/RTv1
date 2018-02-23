@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/22 13:55:40 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/02/23 21:37:48 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME		=	RTv1
 
 CC			=	gcc
 
-CFLAGS		=	-Wextra -Werror -Wall -g3
+CFLAGS		=	-Wextra -Werror -Wall -g3 -O3
 
 HDRSDIR		=	./includes
 
@@ -22,7 +22,7 @@ HDRS		=	$(addprefix $(HDRSDIR)/, rtv1.h)
 
 SRCSDIR		=	./sources
 
-SRCS		=	main.c events.c fps.c
+SRCS		=	main.c events.c fps.c utils.c draw.c opencl.c sys_handler.c
 
 OBJDIR		=	./obj
 
