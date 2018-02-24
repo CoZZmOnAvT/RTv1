@@ -6,17 +6,12 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/24 13:21:23 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 13:36:32 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 14:57:19 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTURES_H
 # define STRUCTURES_H
-
-typedef unsigned char	t_uchar;
-typedef unsigned int	t_uint;
-typedef unsigned long	t_ulong;
-typedef unsigned short	t_ushort;
 
 typedef struct	s_light
 {
@@ -32,6 +27,7 @@ typedef struct	s_obj
 	t_point	pos;
 	double	rad;
 	int		spec;
+	double	refl;
 }				t_obj;
 
 typedef struct	s_viewport

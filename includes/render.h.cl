@@ -36,12 +36,15 @@ typedef struct	s_obj_data
 	float	closest_t;
 }				t_obj_data;
 
-double2			intersect_ray_sphere(float3 O, float3 D, t_obj obj);
+float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj);
 
-float			compute_lighting(float3 P, float3 N, float3 V, int s, double max,
+t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
+									__constant t_obj *objs);
+
+float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
 								__constant t_light *light, __constant t_obj *objs);
 
-t_uint			trace_ray(float3 O, float3 D, double min, double max,
+t_uint			trace_ray(float3 O, float3 D, float min, float max,
 							__constant t_obj *objs, __constant t_light *light);
 
 __kernel void
