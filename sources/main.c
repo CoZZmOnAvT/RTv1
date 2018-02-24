@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 19:02:21 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 19:10:08 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int		main(void)
 	cl_reinit_mem(&env.cl, &env.cam->kl.mem, env.win->w * env.win->h * 4, 0);
 	cl_reinit_mem(&env.cl, &env.objs, sizeof(objs), objs);
 	cl_reinit_mem(&env.cl, &env.light, sizeof(light), light);
-	env.cam->pos.z -= 5;
 	while (1)
 	{
 		clEnqueueWriteBuffer(env.cl.queue, env.objs, CL_TRUE, 0, sizeof(objs), objs, 0, NULL, NULL);
