@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 00:09:38 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 13:23:48 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <errno.h>
 # include <OpenCl/OpenCl.h>
 # include "sgl.h"
+# include "structures.h"
 
 # define PROGRAM_NAME "RTv1"
 
@@ -41,28 +42,6 @@ typedef struct	s_cl_kl
 	cl_kernel			kernel;
 	cl_mem				mem;
 }				t_cl_kl;
-
-typedef struct	s_light
-{
-	char	type;
-	double	intens;
-	t_point	pos;
-	t_point	dir;
-}				t_light;
-
-typedef struct	s_obj
-{
-	t_uint	color;
-	t_point	pos;
-	double	rad;
-}				t_obj;
-
-typedef struct	s_viewport
-{
-	double	w;
-	double	h;
-	double	dist;
-}				t_viewport;
 
 typedef struct	s_cam
 {
@@ -117,7 +96,7 @@ void			init_env(t_env *env);
 **				↓↓↓↓↓↓↓↓
 */
 
-void			cl_reinit_mem(t_cl_core *cl, t_cl_kl *kl, size_t size);
+void			cl_reinit_mem(t_cl_core *cl, cl_mem *mem, size_t size, void *ptr);
 
 void			cl_init(t_cl_core *cl, cl_device_type dev_type);
 

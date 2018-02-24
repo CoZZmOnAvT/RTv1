@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 14:01:53 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/23 22:34:45 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 12:11:34 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int		poll_events(t_env *env)
 		else if (e.window.event == SDL_WINDOWEVENT_RESIZED)
 		{
 			sgl_win_resize(e.window.windowID, e.window.data1, e.window.data2);
-			cl_reinit_mem(&env->cl, &env->cam->kl,
-							e.window.data1 * e.window.data2 * 4);
+			cl_reinit_mem(&env->cl, &env->cam->kl.mem,
+							e.window.data1 * e.window.data2 * 4, 0);
 		}
 	return (1);
 }

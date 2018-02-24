@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/26 21:20:01 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/23 22:50:48 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/24 13:18:35 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,15 @@ static void	build_debug(t_cl_core *cl, t_cl_kl *kl)
 	ft_err_handler("OpenCl", "Can't build program!", 0, 1);
 }
 
-void		cl_reinit_mem(t_cl_core *cl, t_cl_kl *kl, size_t size)
+void		cl_reinit_mem(t_cl_core *cl, cl_mem *mem, size_t size, void *ptr)
 {
-	clReleaseMemObject(kl->mem);
-	!(kl->mem = clCreateBuffer(cl->context, CL_MEM_READ_WRITE, size, 0, 0))
-		? ft_err_handler("OpenCl", "Can't allocate memmory!", 0, 1) : 0;
+	clReleaseMemObject(*mem);
+	if (!ptr)
+		!(*mem = clCreateBuffer(cl->context, CL_MEM_READ_WRITE, size, 0, 0))
+			? ft_err_handler("OpenCl", "Can't allocate memmory!", 0, 1) : 0;
+	else
+		!(*mem = clCreateBuffer(cl->context, CL_MEM_USE_HOST_PTR, size, ptr, 0))
+			? ft_err_handler("OpenCl", "Can't allocate memmory!", 0, 1) : 0;
 }
 
 void		cl_init(t_cl_core *cl, cl_device_type dev_type)
@@ -66,7 +70,7 @@ void		cl_parse_kernel(t_cl_core *cl, t_cl_kl *kl,
 		(const char **)&obj_content, (const size_t *)&obj_size, &er);
 	ft_memdel((void **)&obj_content);
 	er ? ft_err_handler("OpenCl", "Can't create program!", 0, 1) : 0;
-	er = clBuildProgram(kl->program, 1, &cl->device, NULL, NULL, NULL);
+	er = clBuildProgram(kl->program, 1, &cl->device, "-I ./includes", 0, 0);
 	er == CL_BUILD_PROGRAM_FAILURE ? build_debug(cl, kl) : 0;
 	kl->kernel = clCreateKernel(kl->program, func_name, &er);
 	er ? ft_err_handler("OpenCl", "Can't create kernel!", 0, 1) : 0;

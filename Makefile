@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/23 21:37:48 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/02/24 13:36:29 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CFLAGS		=	-Wextra -Werror -Wall -g3 -O3
 
 HDRSDIR		=	./includes
 
-HDRS		=	$(addprefix $(HDRSDIR)/, rtv1.h)
+HDRS		=	$(addprefix $(HDRSDIR)/, rtv1.h structures.h)
 
 SRCSDIR		=	./sources
 
