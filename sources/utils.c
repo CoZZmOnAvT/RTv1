@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:16:00 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 15:02:34 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 16:36:06 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,6 @@ void	init_env(t_env *env)
 	env->cam->vwp->w = 1.77;
 	env->cam->vwp->h = 1.0;
 	env->cam->vwp->dist = 1;
+	env->smooth = 3;
+	env->rf_depth = 4;
 }

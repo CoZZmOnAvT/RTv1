@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 14:27:26 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 16:22:58 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct	s_env
 	t_cam			*cam;
 	cl_mem			objs;
 	cl_mem			light;
+	int				smooth;
+	int				rf_depth;
 }				t_env;
 
 extern t_obj	objs[];

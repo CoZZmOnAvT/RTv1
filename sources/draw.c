@@ -6,13 +6,13 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:32:50 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 14:24:56 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 16:56:37 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-void	render_scene(t_env *env)
+static void	set_args(t_env *env)
 {
 	cl_int	err;
 
@@ -32,6 +32,17 @@ void	render_scene(t_env *env)
 		&env->objs)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 7, sizeof(cl_mem),
 		&env->light)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+	(err = clSetKernelArg(env->cam->kl.kernel, 8, sizeof(int),
+		&env->smooth)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+	(err = clSetKernelArg(env->cam->kl.kernel, 9, sizeof(int),
+		&env->rf_depth)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+}
+
+void		render_scene(t_env *env)
+{
+	cl_int	err;
+
+	set_args(env);
 	err = clEnqueueNDRangeKernel(env->cl.queue, env->cam->kl.kernel, 2, NULL,
 		(size_t[3]){env->win->w, env->win->h, 0}, NULL, 0, NULL, NULL);
 	err ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
