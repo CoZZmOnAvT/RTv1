@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/24 13:21:23 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 14:57:19 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 19:02:40 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@ typedef struct	s_light
 
 typedef struct	s_obj
 {
-	t_uint	color;
-	t_point	pos;
-	double	rad;
-	int		spec;
-	double	refl;
+	t_uint		color;
+	short int	type;
+	t_point		pos;
+	double		rad;
+	int			spec;
+	double		refl;
 }				t_obj;
 
 typedef struct	s_viewport

@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 16:22:58 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 20:31:32 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,12 @@
 
 # define KERNEL_FOLDER "./resources/kernels/"
 
-# define W_WIDTH 1280
-# define W_HEIGHT 720
+# define W_WIDTH 1920
+# define W_HEIGHT 1080
 
 # define EXIT_KEY SDLK_ESCAPE
+
+# define CAMERA_M(n)(n & 0b1)
 
 typedef struct	s_cl_core
 {
@@ -60,6 +62,7 @@ typedef struct	s_env
 	cl_mem			light;
 	int				smooth;
 	int				rf_depth;
+	t_ulong			flags;
 }				t_env;
 
 extern t_obj	objs[];

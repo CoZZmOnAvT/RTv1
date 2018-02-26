@@ -12,9 +12,9 @@
 
 #include "render.h.cl"
 
-# define SMOOTH_LEVEL 3
+# define SMOOTH_LEVEL 2
 
-# define REFLECT_DEPTH 4
+# define REFLECT_DEPTH 5
 
 inline float3	reflect_ray(float3 R, float3 N)
 {
@@ -53,7 +53,7 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 
 	obj_data.closest_t = INFINITY;
 	obj_data.obj.color = 0x000000;
-	while (objs[++it].color)
+	while (objs[++it].type != -1)
 	{
 		T = intersect_ray_sphere(O, D, objs[it]);
 		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)

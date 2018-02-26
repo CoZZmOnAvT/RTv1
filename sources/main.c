@@ -6,28 +6,36 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 17:13:36 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 20:46:26 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "rtv1.h"
 
 t_obj	objs[] = {
-	{0xFF0000, {0, -1, 3}, 1.0, 500, 0.2},
-	{0x0000FF, {2, 0, 4}, 1.0, 500, 0.3},
-	{0x00FF00, {-2, 0, 4}, 1.0, 100, 0.4},
-	{0xFFFF00, {0, -201, 0}, 200, 1000, 0.5},
-	{0, {0, 0, 0}, 0, 0, 0}
+	{0xFF0000, 0, {1, -1, 0}, 1, 500, 0.2},
+	{0xFFFFFF, 0, {0, 0, 0}, .5, 500, 0.3},
+	{0x00FF00, 0, {-1, 1, 0}, 1, 1000, 0.4},
+	{0x00008C, 0, {0, -201, 0}, 200, 5000, 0.6},
+	{.type = -1}
 };
 
 t_light	light[] = {
-	{.type = 0, .intens = 0.2},
-	{.type = 1, .intens = 0.6, .pos = {2, 5, 0}},
+	{.type = 0, .intens = 0.4},
+	{.type = 1, .intens = 0.2, .pos = {2, 5, 0}},
+	{.type = 1, .intens = 0.2, .pos = {-2, 5, 0}},
 	{.type = 2, .intens = 0.2, .dir = {4, 4, 0}},
 	{.type = -1}
 };
 
-int		main(void)
+inline static void	camera_rotate(t_env *env)
+{
+	env->cam->rot.ry = (int)(env->cam->rot.ry + 1) % 360;
+	env->cam->pos.x = 4 * sin(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.z = -4 * cos(ft_degtorad(env->cam->rot.ry));
+}
+
+int					main(void)
 {
 	t_env			env;
 
@@ -49,6 +57,7 @@ int		main(void)
 		SDL_RenderCopy(env.win->rend, env.win->tex, NULL, NULL);
 		display_fps(env.win->rend);
 		SDL_RenderPresent(env.win->rend);
+		CAMERA_M(env.flags) ? camera_rotate(&env) : 0;
 		sgl_vsync();
 	}
 	return (sgl_quit());
