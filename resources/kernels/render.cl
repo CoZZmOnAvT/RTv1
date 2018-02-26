@@ -12,7 +12,7 @@
 
 #include "render.h.cl"
 
-# define SMOOTH_LEVEL 2
+# define SMOOTH_LEVEL 3
 
 inline float3	reflect_ray(float3 R, float3 N)
 {
@@ -97,7 +97,7 @@ float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
 
 			n_dot_l = dot(N, L);
 			if (n_dot_l > 0)
-				coef += light[it].intens * n_dot_l / (fast_length(N) * fast_length(L));
+				coef += light[it].intens * n_dot_l / fast_length(L);
 
 			if (s > 0)
 			{
@@ -198,9 +198,39 @@ float3		canvas_to_viewport(float x, float y, t_viewport vwp, t_uint w_width, t_u
 	return ((float3){x * vwp.w / w_width, y * vwp.h / w_height, vwp.dist});
 }
 
+float3		rotate_point(float3 rot, float3 D)
+{
+	float3	sin_c;
+	float3	cos_c;
+	float3	RX;
+	float3	RY;
+	float3	RZ;
+
+	sin_c.x = sin(rot.x * M_PI / 180.0);
+	cos_c.x = cos(rot.x * M_PI / 180.0);
+	sin_c.y = sin(rot.y * M_PI / 180.0);
+	cos_c.y = cos(rot.y * M_PI / 180.0);
+	sin_c.z = sin(rot.z * M_PI / 180.0);
+	cos_c.z = cos(rot.z * M_PI / 180.0);
+
+	RX.x = D.x;
+	RX.y = D.y * cos_c.x + D.z * sin_c.x;
+	RX.z = D.z * cos_c.x - D.y * sin_c.x;
+
+	RY.x = RX.x * cos_c.y - RX.z * sin_c.y;
+	RY.y = RX.y;
+	RY.z = RX.z * cos_c.y + RX.x * sin_c.y;
+
+	RZ.x = RY.x * cos_c.z + RY.y * sin_c.z;
+	RZ.y = RY.y * cos_c.z - RY.x * sin_c.z;
+	RZ.z = RY.z;
+	return (RZ);
+}
+
 __kernel void
-render_scene(__global t_uint *pixels, t_point cam_pos, t_uint w_width, t_uint w_height,
-				t_viewport vwp, __constant t_obj *objs, __constant t_light *light)
+render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
+				t_uint w_width, t_uint w_height, t_viewport vwp,
+				__constant t_obj *objs, __constant t_light *light)
 {
 	int			screen_x = get_global_id(0);
 	int			screen_y = get_global_id(1);
@@ -211,6 +241,7 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_uint w_width, t_uint w_
 	t_uint		color[SMOOTH_LEVEL * SMOOTH_LEVEL];
 	float3		O;
 	float3		D;
+	float3		CR = (float3){cam_rot.rx, cam_rot.ry, cam_rot.rz};
 
 	O = (float3){cam_pos.x, cam_pos.y, cam_pos.z};
 	while (++itx < SMOOTH_LEVEL)
@@ -218,7 +249,8 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_uint w_width, t_uint w_
 		ity = -1;
 		while (++ity < SMOOTH_LEVEL)
 		{
-			D = canvas_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL, y + (ity + 0.5) / SMOOTH_LEVEL, vwp, w_width, w_height);
+			D = rotate_point(CR, canvas_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
+								y + (ity + 0.5) / SMOOTH_LEVEL, vwp, w_width, w_height));
 			color[ity * SMOOTH_LEVEL + itx] = trace_ray(O, D, 1, INFINITY, objs, light);
 		}
 	}

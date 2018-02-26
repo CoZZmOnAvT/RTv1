@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:32:50 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 17:02:17 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 14:24:56 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,17 @@ void	render_scene(t_env *env)
 		&env->cam->kl.mem)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 1, sizeof(t_point),
 		&env->cam->pos)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
-	(err = clSetKernelArg(env->cam->kl.kernel, 2, sizeof(t_uint),
-		&env->win->w)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+	(err = clSetKernelArg(env->cam->kl.kernel, 2, sizeof(t_rotate),
+		&env->cam->rot)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 3, sizeof(t_uint),
+		&env->win->w)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+	(err = clSetKernelArg(env->cam->kl.kernel, 4, sizeof(t_uint),
 		&env->win->h)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
-	(err = clSetKernelArg(env->cam->kl.kernel, 4, sizeof(t_viewport),
+	(err = clSetKernelArg(env->cam->kl.kernel, 5, sizeof(t_viewport),
 		env->cam->vwp)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
-	(err = clSetKernelArg(env->cam->kl.kernel, 5, sizeof(cl_mem),
-		&env->objs)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 6, sizeof(cl_mem),
+		&env->objs)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+	(err = clSetKernelArg(env->cam->kl.kernel, 7, sizeof(cl_mem),
 		&env->light)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	err = clEnqueueNDRangeKernel(env->cl.queue, env->cam->kl.kernel, 2, NULL,
 		(size_t[3]){env->win->w, env->win->h, 0}, NULL, 0, NULL, NULL);

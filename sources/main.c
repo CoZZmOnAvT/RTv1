@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 19:10:08 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 15:02:19 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ int		main(void)
 	{
 		clEnqueueWriteBuffer(env.cl.queue, env.objs, CL_TRUE, 0, sizeof(objs), objs, 0, NULL, NULL);
 		clEnqueueWriteBuffer(env.cl.queue, env.light, CL_TRUE, 0, sizeof(light), light, 0, NULL, NULL);
-		SDL_SetRenderDrawColor(env.win->rend, 0, 0, 0, 0);
-		SDL_RenderClear(env.win->rend);
 		render_scene(&env);
 		if (poll_events(&env) == 0)
 			return (sgl_quit());
@@ -54,7 +52,6 @@ int		main(void)
 		// objs[0].pos.x += 0.001;
 		// objs[1].pos.z += 0.001;
 		// objs[2].pos.y += 0.001;
-		// env.cam->pos.z -= 0.01;
 		sgl_vsync();
 	}
 	return (sgl_quit());

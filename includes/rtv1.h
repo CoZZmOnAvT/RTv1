@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/24 13:23:48 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 14:27:26 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 
 # define KERNEL_FOLDER "./resources/kernels/"
 
-# define W_WIDTH 1024
-# define W_HEIGHT 1024
+# define W_WIDTH 1280
+# define W_HEIGHT 720
 
 # define EXIT_KEY SDLK_ESCAPE
 

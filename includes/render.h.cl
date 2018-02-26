@@ -27,6 +27,12 @@ typedef struct	s_point
 	double	z;
 }				t_point;
 
+typedef struct	s_rotate
+{
+	double	rx;
+	double	ry;
+	double	rz;
+}				t_rotate;
 
 # include "structures.h"
 
@@ -48,7 +54,8 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 							__constant t_obj *objs, __constant t_light *light);
 
 __kernel void
-render_scene(__global t_uint *pixels, t_point cam_pos, t_uint w_width, t_uint w_height,
-				t_viewport vwp, __constant t_obj *objs, __constant t_light *light);
+render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
+			t_uint w_width, t_uint w_height, t_viewport vwp,
+			__constant t_obj *objs, __constant t_light *light);
 
 #endif
