@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 16:55:45 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/26 17:13:36 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,8 @@ t_obj	objs[] = {
 
 t_light	light[] = {
 	{.type = 0, .intens = 0.2},
-	{.type = 1, .intens = 0.5, .pos = {2, 5, 0}},
-	{.type = 2, .intens = 0.1, .dir = {4, 4, 0}},
-	{.type = 2, .intens = 0.1, .dir = {1, 4, 0}},
-	{.type = 2, .intens = 0.1, .dir = {-1, 4, 0}},
+	{.type = 1, .intens = 0.6, .pos = {2, 5, 0}},
+	{.type = 2, .intens = 0.2, .dir = {4, 4, 0}},
 	{.type = -1}
 };
 
@@ -51,9 +49,6 @@ int		main(void)
 		SDL_RenderCopy(env.win->rend, env.win->tex, NULL, NULL);
 		display_fps(env.win->rend);
 		SDL_RenderPresent(env.win->rend);
-		// objs[0].pos.x += 0.01;
-		// objs[1].pos.z += 0.01;
-		// objs[2].pos.y += 0.01;
 		sgl_vsync();
 	}
 	return (sgl_quit());

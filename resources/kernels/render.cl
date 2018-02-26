@@ -12,6 +12,10 @@
 
 #include "render.h.cl"
 
+# define SMOOTH_LEVEL 3
+
+# define REFLECT_DEPTH 4
+
 inline float3	reflect_ray(float3 R, float3 N)
 {
 	return (2.0F * N * dot(N, R) - R);
@@ -109,8 +113,7 @@ float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
 }
 
 t_uint			trace_ray(float3 O, float3 D, float min, float max,
-						__constant t_obj *objs, __constant t_light *light,
-						int reflect_depth)
+						__constant t_obj *objs, __constant t_light *light)
 {
 	t_obj_data	obj_data;
 
@@ -121,20 +124,20 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 
 	float		light_coef;
 
-	float4		lc_color[4];
-	float		r[4];
+	float4		lc_color[REFLECT_DEPTH];
+	float		r[REFLECT_DEPTH];
 	float4		result_color;
 
 	int			it = -1;
 
-	while (++it < 4)
+	while (++it < REFLECT_DEPTH)
 	{
 		lc_color[it] = 0;
 		r[it] = 0;
 	}
 
 	it = -1;
-	while(++it < 4)
+	while(++it < REFLECT_DEPTH)
 	{
 		obj_data = closest_intersection(O, D, min, max, objs);
 		CO_C = (float3){obj_data.obj.pos.x, obj_data.obj.pos.y, obj_data.obj.pos.z};
@@ -166,8 +169,8 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 		min = 0.001;
 	}
 
-	result_color = lc_color[4 - 1] * r[4 - 1];
-	it = 4 - 1;
+	result_color = lc_color[REFLECT_DEPTH - 1] * r[REFLECT_DEPTH - 1];
+	it = REFLECT_DEPTH - 1;
 	while (--it > 0)
 	{
 		result_color = (lc_color[it] * (1 - r[it]) + result_color) * r[it];
@@ -232,8 +235,7 @@ float3		rotate_point(float3 rot, float3 D)
 __kernel void
 render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 				t_uint w_width, t_uint w_height, t_viewport vwp,
-				__constant t_obj *objs, __constant t_light *light,
-				int smooth, int reflect_depth)
+				__constant t_obj *objs, __constant t_light *light)
 {
 	int			screen_x = get_global_id(0);
 	int			screen_y = get_global_id(1);
@@ -241,22 +243,22 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 	int			y = w_height / 2 - screen_y;
 	int			itx = -1;
 	int			ity = -1;
-	t_uint		color[smooth * smooth];
+	t_uint		color[SMOOTH_LEVEL * SMOOTH_LEVEL];
 	float3		O;
 	float3		D;
 	float3		CR = (float3){cam_rot.rx, cam_rot.ry, cam_rot.rz};
 
 	O = (float3){cam_pos.x, cam_pos.y, cam_pos.z};
-	while (++itx < smooth)
+	while (++itx < SMOOTH_LEVEL)
 	{
 		ity = -1;
-		while (++ity < smooth)
+		while (++ity < SMOOTH_LEVEL)
 		{
-			D = rotate_point(CR, canvas_to_viewport(x + (itx + 0.5) / smooth,
-								y + (ity + 0.5) / smooth, vwp, w_width, w_height));
-			color[ity * smooth + itx] = trace_ray(O, D, 1, INFINITY, objs, light, reflect_depth);
+			D = rotate_point(CR, canvas_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
+								y + (ity + 0.5) / SMOOTH_LEVEL, vwp, w_width, w_height));
+			color[ity * SMOOTH_LEVEL + itx] = trace_ray(O, D, 1, INFINITY, objs, light);
 		}
 	}
 
-	pixels[screen_y * w_width + screen_x] = avg_color(color, smooth * smooth);
+	pixels[screen_y * w_width + screen_x] = avg_color(color, SMOOTH_LEVEL * SMOOTH_LEVEL);
 }

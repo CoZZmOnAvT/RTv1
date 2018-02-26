@@ -51,8 +51,7 @@ float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
 								__constant t_light *light, __constant t_obj *objs);
 
 t_uint			trace_ray(float3 O, float3 D, float min, float max,
-						__constant t_obj *objs, __constant t_light *light,
-						int reflect_depth);
+						__constant t_obj *objs, __constant t_light *light);
 
 float3			canvas_to_viewport(float x, float y, t_viewport vwp,
 									t_uint w_width, t_uint w_height);
@@ -62,7 +61,6 @@ float3			rotate_point(float3 rot, float3 D);
 __kernel void
 render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 			t_uint w_width, t_uint w_height, t_viewport vwp,
-			__constant t_obj *objs, __constant t_light *light,
-			int smooth, int reflect_depth);
+			__constant t_obj *objs, __constant t_light *light);
 
 #endif
