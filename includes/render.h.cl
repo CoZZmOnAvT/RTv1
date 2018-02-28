@@ -15,6 +15,14 @@
 
 # pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
+# define SPHERE 0
+# define CYLINDER 1
+# define CONE 2
+# define PLANE 3
+
+# define SMOOTH_LEVEL 1
+# define REFLECT_DEPTH 3
+
 typedef unsigned char	t_uchar;
 typedef unsigned int	t_uint;
 typedef unsigned long	t_ulong;

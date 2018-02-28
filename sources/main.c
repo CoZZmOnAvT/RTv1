@@ -6,33 +6,37 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 20:46:26 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/28 16:36:32 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "rtv1.h"
 
 t_obj	objs[] = {
-	{0xFF0000, 0, {1, -1, 0}, 1, 500, 0.2},
-	{0xFFFFFF, 0, {0, 0, 0}, .5, 500, 0.3},
-	{0x00FF00, 0, {-1, 1, 0}, 1, 1000, 0.4},
-	{0x00008C, 0, {0, -201, 0}, 200, 5000, 0.6},
+	{0xFF0000, 0, {-1, 0, 0}, {0, 0, 0},  1, 500, 0.01},
+	{0x0000FF, 0, {1, 0, 0},  {0, 0, 0}, 1, 200, 0.01},
+	{0x00FF00, 0, {0, 1.73, 0}, {0, 0, 0}, 1, 1000, 0.01},
+	{0xC0C0C0, 3, {0, -1, 0}, {0, 1, 0}, 200, 100, 0.3},
+	// {0xC0C0C0, 3, {0, 8, 0}, {0, -1, 0}, 200, 100, 0.3},
+	// {0xFFFFFF, 3, {-8, 0, 0}, {-1, 0, 0}, 200, 100, 0.9},
+	// {0xFFFFFF, 3, {8, 0, 0}, {1, 0, 0}, 200, 100, 0.9},
+	// {0xFFFFFF, 3, {0, 0, 8}, {0, 0, 1}, 200, 100, 0.9},
+	// {0xFFFFFF, 3, {0, 0, -8}, {0, 0, -1}, 200, 100, 0.9},
 	{.type = -1}
 };
 
 t_light	light[] = {
-	{.type = 0, .intens = 0.4},
-	{.type = 1, .intens = 0.2, .pos = {2, 5, 0}},
-	{.type = 1, .intens = 0.2, .pos = {-2, 5, 0}},
-	{.type = 2, .intens = 0.2, .dir = {4, 4, 0}},
+	// {.type = 0, .intens = 0.4},
+	{.type = 1, .intens = 1, .pos = {1, 6, 0}},
+	// {.type = 2, .intens = 0.1, .dir = {4, 2, 0}},
 	{.type = -1}
 };
 
 inline static void	camera_rotate(t_env *env)
 {
 	env->cam->rot.ry = (int)(env->cam->rot.ry + 1) % 360;
-	env->cam->pos.x = 4 * sin(ft_degtorad(env->cam->rot.ry));
-	env->cam->pos.z = -4 * cos(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.x = 8 * sin(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.z = -8 * cos(ft_degtorad(env->cam->rot.ry));
 }
 
 int					main(void)
@@ -50,9 +54,9 @@ int					main(void)
 	{
 		clEnqueueWriteBuffer(env.cl.queue, env.objs, CL_TRUE, 0, sizeof(objs), objs, 0, NULL, NULL);
 		clEnqueueWriteBuffer(env.cl.queue, env.light, CL_TRUE, 0, sizeof(light), light, 0, NULL, NULL);
-		render_scene(&env);
 		if (poll_events(&env) == 0)
 			return (sgl_quit());
+		render_scene(&env);
 		SDL_UpdateTexture(env.win->tex, NULL, env.win->surf->pixels, 1);
 		SDL_RenderCopy(env.win->rend, env.win->tex, NULL, NULL);
 		display_fps(env.win->rend);

@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/24 13:21:23 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/26 19:02:40 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/02/27 15:39:43 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct	s_obj
 	t_uint		color;
 	short int	type;
 	t_point		pos;
+	t_point		dir;
 	double		rad;
 	int			spec;
 	double		refl;

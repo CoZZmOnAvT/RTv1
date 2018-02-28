@@ -12,171 +12,11 @@
 
 #include "render.h.cl"
 
-# define SMOOTH_LEVEL 2
-
-# define REFLECT_DEPTH 5
+/*---------------------------------UTILITIES---------------------------------*/
 
 inline float3	reflect_ray(float3 R, float3 N)
 {
 	return (2.0F * N * dot(N, R) - R);
-}
-
-float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
-{
-	double	descr;
-	double	k1;
-	double	k2;
-	double	k3;
-	float3	OC;
-	float3	C = (float3){obj.pos.x, obj.pos.y, obj.pos.z};
-
-	OC = O - C;
-
-	k1 = dot(D, D);
-	k2 = 2.0F * dot(OC, D);
-	k3 = dot(OC, OC) - obj.rad * obj.rad;
-
-	descr = k2 * k2 - 4.0F * k1 * k3;
-	if (descr < 0)
-		return ((float2){INFINITY, INFINITY});
-	return ((float2){
-		(-k2 + sqrt(descr)) / (2.0F * k1),
-		(-k2 - sqrt(descr)) / (2.0F * k1)});
-}
-
-t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
-								__constant t_obj *objs)
-{
-	t_obj_data	obj_data;
-	float2		T;
-	int			it;
-
-	obj_data.closest_t = INFINITY;
-	obj_data.obj.color = 0x000000;
-	while (objs[++it].type != -1)
-	{
-		T = intersect_ray_sphere(O, D, objs[it]);
-		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
-		{
-			obj_data.closest_t = T.x;
-			obj_data.obj = objs[it];
-		}
-		if (T.y >= min && T.y <= max && T.y < obj_data.closest_t)
-		{
-			obj_data.closest_t = T.y;
-			obj_data.obj = objs[it];
-		}
-	}
-	return (obj_data);
-}
-
-float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
-						__constant t_light *light, __constant t_obj *objs)
-{
-	t_obj_data	shadow_obj;
-	float3		L;
-	float3		R;
-	float		coef;
-	float		n_dot_l;
-	float		r_dot_v;
-	int			it;
-
-	coef = 0.0;
-	it = -1;
-	while (light[++it].type != -1)
-		if (light[it].type == 0)
-			coef += light[it].intens;
-		else
-		{
-			if (light[it].type == 1)
-				L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
-			else
-				L = (float3){light[it].dir.x, light[it].dir.y, light[it].dir.z};
-
-			shadow_obj = closest_intersection(P, L, 0.001, max, objs);
-			if (shadow_obj.obj.color != 0x000000)
-				continue ;
-
-			n_dot_l = dot(N, L);
-			if (n_dot_l > 0)
-				coef += light[it].intens * n_dot_l / fast_length(L);
-
-			if (s > 0)
-			{
-				R = 2.0F * N * n_dot_l - L;
-				r_dot_v = dot(R, V);
-				if (r_dot_v > 0)
-					coef += light[it].intens * pown(r_dot_v / (fast_length(R) * fast_length(V)), s);
-			}
-		}
-	return (coef);
-}
-
-t_uint			trace_ray(float3 O, float3 D, float min, float max,
-						__constant t_obj *objs, __constant t_light *light)
-{
-	t_obj_data	obj_data;
-
-	float3		P;
-	float3		R;
-	float3		N;
-	float3		CO_C;
-
-	float		light_coef;
-
-	float4		lc_color[REFLECT_DEPTH];
-	float		r[REFLECT_DEPTH];
-	float4		result_color;
-
-	int			it = -1;
-
-	while (++it < REFLECT_DEPTH)
-	{
-		lc_color[it] = 0;
-		r[it] = 0;
-	}
-
-	it = -1;
-	while(++it < REFLECT_DEPTH)
-	{
-		obj_data = closest_intersection(O, D, min, max, objs);
-		CO_C = (float3){obj_data.obj.pos.x, obj_data.obj.pos.y, obj_data.obj.pos.z};
-
-		if (obj_data.obj.color == 0x000000)
-		{
-			lc_color[it] = 0x000000;
-			r[it] = 0;
-			break ;
-		}
-		P = O + obj_data.closest_t * D;
-		N = P - CO_C;
-		N = N / fast_length(N);
-		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, max, light, objs);
-		light_coef > 1 ? light_coef = 1 : 0;
-
-		lc_color[it].x = obj_data.obj.color >> 24 & 0xFF;
-		lc_color[it].y = obj_data.obj.color >> 16 & 0xFF;
-		lc_color[it].z = obj_data.obj.color >> 8 & 0xFF;
-		lc_color[it].w = obj_data.obj.color & 0xFF;
-		lc_color[it] *= light_coef;
-
-		r[it] = obj_data.obj.refl;
-		r[it] <= 0 ? r[it] = 0 : 0;
-
-		R = reflect_ray(-D, N);
-		O = P;
-		D = R;
-		min = 0.001;
-	}
-
-	result_color = lc_color[REFLECT_DEPTH - 1] * r[REFLECT_DEPTH - 1];
-	it = REFLECT_DEPTH - 1;
-	while (--it > 0)
-	{
-		result_color = (lc_color[it] * (1 - r[it]) + result_color) * r[it];
-	}
-	result_color += lc_color[0] * (1 - r[0]);
-	return ((uchar)result_color.y * 0x10000 + (uchar)result_color.z * 0x100 + (uchar)result_color.w);
 }
 
 t_uint		avg_color(t_uint arr[], t_uint num)
@@ -230,6 +70,244 @@ float3		rotate_point(float3 rot, float3 D)
 	RZ.y = RY.y * cos_c.z - RY.x * sin_c.z;
 	RZ.z = RY.z;
 	return (RZ);
+}
+
+float3			calc_normal(float3 P, t_obj obj)
+{
+	float		scal;
+	float3		proj;
+	float3		OP = {obj.pos.x, obj.pos.y, obj.pos.z};
+	float3		OD = {obj.dir.x, obj.dir.y, obj.dir.z};
+	float3		N;
+	float3		T = {0.0F, 1.0F, 0.0F};
+
+	if (obj.type == PLANE)
+		return (OD);
+	N = P - OP;
+	if (obj.type == CYLINDER || obj.type == CONE)
+	{
+		scal = dot(N, T);
+		proj = T * scal;
+		N -= proj;
+	}
+	N = N / fast_length(N);
+	return (N);
+}
+
+/*-------------------------------INTERSECTIONS-------------------------------*/
+
+float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
+{
+	float3	OP = {obj.pos.x, obj.pos.y, obj.pos.z};
+	float3	OD = {obj.dir.x, obj.dir.y, obj.dir.z};
+	float3	OC;
+	float2	T;
+	float	k[2];
+
+	OC = O - OP;
+	k[0] = dot(D, OD);
+	k[1] = dot(OC, OD);
+	if (k[0])
+	{
+		T.x = -k[1] / k[0];
+		T.y = INFINITY;
+		return (T);
+	}
+	return ((float2){INFINITY, INFINITY});
+}
+
+float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
+{
+	double	descr;
+	double	k1;
+	double	k2;
+	double	k3;
+	float3	D_Va;
+	float3	OC_Va;
+	float3	OC;
+	float3	C = {obj.pos.x, obj.pos.y, obj.pos.z};
+	float3	CT = {obj.dir.x, obj.dir.y, obj.dir.z};
+	float3	Va = (CT - C) / fast_length(CT - C);
+
+	OC = O - C;
+	D_Va = D - dot(D, Va) * Va;
+	OC_Va = OC - dot(OC, Va) * Va;
+	k1 = dot(D_Va, D_Va);
+	k2 = 2.0F * dot(D_Va, OC_Va);
+	k3 = dot(OC_Va, OC_Va) - obj.rad * obj.rad;
+
+	descr = k2 * k2 - 4.0F * k1 * k3;
+	if (descr < 0)
+		return ((float2){INFINITY, INFINITY});
+	return ((float2){
+		(-k2 + sqrt(descr)) / (2.0F * k1),
+		(-k2 - sqrt(descr)) / (2.0F * k1)});
+}
+
+float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
+{
+	double	descr;
+	double	k1;
+	double	k2;
+	double	k3;
+	float3	OC;
+	float3	C = (float3){obj.pos.x, obj.pos.y, obj.pos.z};
+
+	OC = O - C;
+
+	k1 = dot(D, D);
+	k2 = 2.0F * dot(OC, D);
+	k3 = dot(OC, OC) - obj.rad * obj.rad;
+
+	descr = k2 * k2 - 4.0F * k1 * k3;
+	if (descr < 0)
+		return ((float2){INFINITY, INFINITY});
+	return ((float2){
+		(-k2 + sqrt(descr)) / (2.0F * k1),
+		(-k2 - sqrt(descr)) / (2.0F * k1)});
+}
+
+t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
+								__constant t_obj *objs)
+{
+	t_obj_data	obj_data;
+	float2		T;
+	int			it;
+
+	obj_data.closest_t = INFINITY;
+	obj_data.obj.type = -1;
+	while (objs[++it].type != -1)
+	{
+		if (objs[it].type == SPHERE)
+			T = intersect_ray_sphere(O, D, objs[it]);
+		else if (objs[it].type == CYLINDER)
+			T = intersect_ray_cylinder(O, D, objs[it]);
+		else if (objs[it].type == PLANE)
+			T = intersect_ray_plane(O, D, objs[it]);
+		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
+		{
+			obj_data.closest_t = T.x;
+			obj_data.obj = objs[it];
+		}
+		if (T.y >= min && T.y <= max && T.y < obj_data.closest_t)
+		{
+			obj_data.closest_t = T.y;
+			obj_data.obj = objs[it];
+		}
+	}
+	return (obj_data);
+}
+
+/*-----------------------------------LIGHT-----------------------------------*/
+
+float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
+						__constant t_light *light, __constant t_obj *objs)
+{
+	t_obj_data	shadow_obj;
+	float3		L;
+	float3		R;
+	float		coef;
+	float		n_dot_l;
+	float		r_dot_v;
+	int			it;
+
+	coef = 0.0;
+	it = -1;
+	while (light[++it].type != -1)
+		if (light[it].type == 0)
+			coef += light[it].intens;
+		else
+		{
+			if (light[it].type == 1)
+				L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
+			else
+				L = (float3){light[it].dir.x, light[it].dir.y, light[it].dir.z};
+
+			shadow_obj = closest_intersection(P, L, 0.01, max, objs);
+			if (shadow_obj.obj.type != -1)
+				continue ;
+
+			n_dot_l = dot(N, L);
+			if (n_dot_l > 0)
+				coef += light[it].intens * n_dot_l / (fast_length(N) * fast_length(L));
+
+			if (s > 0)
+			{
+				R = 2.0F * N * n_dot_l - L;
+				r_dot_v = dot(R, V);
+				if (r_dot_v > 0)
+					coef += light[it].intens * pown(r_dot_v / (fast_length(R) * fast_length(V)), s);
+			}
+		}
+	return (coef);
+}
+
+/*---------------------------------RAYTRACING---------------------------------*/
+
+t_uint			trace_ray(float3 O, float3 D, float min, float max,
+						__constant t_obj *objs, __constant t_light *light)
+{
+	t_obj_data	obj_data;
+
+	float3		P;
+	float3		R;
+	float3		N;
+
+	float		light_coef;
+
+	float4		lc_color[REFLECT_DEPTH];
+	float		r[REFLECT_DEPTH];
+	float4		result_color = 0;
+
+	int			it = -1;
+	int			depth = 0;
+
+	while (++it < REFLECT_DEPTH)
+	{
+		lc_color[it] = 0;
+		r[it] = 0;
+	}
+
+	it = -1;
+	while(++it < REFLECT_DEPTH)
+	{
+		depth++;
+		obj_data = closest_intersection(O, D, min, max, objs);
+		if (obj_data.obj.type == -1)
+		{
+			lc_color[it] = 0x000000;
+			r[it] = 0;
+			break ;
+		}
+		P = O + obj_data.closest_t * D;
+		N = calc_normal(P, obj_data.obj);
+		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, max, light, objs);
+		light_coef > 1 ? light_coef = 1 : 0;
+
+		lc_color[it].x = obj_data.obj.color >> 24 & 0xFF;
+		lc_color[it].y = obj_data.obj.color >> 16 & 0xFF;
+		lc_color[it].z = obj_data.obj.color >> 8 & 0xFF;
+		lc_color[it].w = obj_data.obj.color & 0xFF;
+		lc_color[it] *= light_coef;
+
+		r[it] = obj_data.obj.refl;
+		if (r[it] <= 0)
+		{
+			r[it] = 0;
+			break ;
+		}
+		R = reflect_ray(-D, N);
+		O = P;
+		D = R;
+		min = 0.001;
+	}
+	if (depth > 0)
+		result_color = lc_color[depth - 1] * (1 - r[depth - 1]);
+	it = depth - 1;
+	while (--it > 0)
+		result_color = (lc_color[it] * (1 - r[it]) + result_color) * r[it];
+	result_color += lc_color[0] * (1 - r[0]);
+	return ((uchar)result_color.y * 0x10000 + (uchar)result_color.z * 0x100 + (uchar)result_color.w);
 }
 
 __kernel void
