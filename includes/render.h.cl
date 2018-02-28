@@ -21,7 +21,7 @@
 # define PLANE 3
 
 # define SMOOTH_LEVEL 1
-# define REFLECT_DEPTH 1
+# define REFLECT_DEPTH 5
 
 typedef unsigned char	t_uchar;
 typedef unsigned int	t_uint;
@@ -55,7 +55,7 @@ float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj);
 t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 									__constant t_obj *objs);
 
-float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
+float			compute_lighting(float3 P, float3 N, float3 V, int s,
 								__constant t_light *light, __constant t_obj *objs);
 
 t_uint			trace_ray(float3 O, float3 D, float min, float max,

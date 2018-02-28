@@ -93,6 +93,17 @@ float3			calc_normal(float3 P, t_obj obj)
 	return (N);
 }
 
+float3			sum_colors(float3 a, float3 b)
+{
+	float3 res;
+
+	res = a + b;
+	res.x > 255 ? res.x = 255 : 0;
+	res.y > 255 ? res.y = 255 : 0;
+	res.z > 255 ? res.z = 255 : 0;
+	return (res);
+}
+
 /*-------------------------------INTERSECTIONS-------------------------------*/
 
 float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
@@ -174,7 +185,7 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 	int			it;
 
 	obj_data.closest_t = INFINITY;
-	obj_data.obj.color = 0x0;
+	obj_data.obj.type = -1;
 	while (objs[++it].type != -1)
 	{
 		if (objs[it].type == SPHERE)
@@ -199,43 +210,37 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 
 /*-----------------------------------LIGHT-----------------------------------*/
 
-float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
+float		compute_lighting(float3 P, float3 N, float3 V, int s,
 						__constant t_light *light, __constant t_obj *objs)
 {
 	t_obj_data	shadow_obj;
 	float3		L;
 	float3		R;
 	float		coef;
-	float		n_dot_l;
-	float		r_dot_v;
+	float		ln;
 	int			it;
 
-	coef = 0.0;
+	coef = 0;
 	it = -1;
 	while (light[++it].type != -1)
 		if (light[it].type == 0)
 			coef += light[it].intens;
 		else
 		{
-			if (light[it].type == 1)
-				L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
-			else
-				L = (float3){light[it].dir.x, light[it].dir.y, light[it].dir.z};
+			L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
+			L /= fast_length(L);
 
-			shadow_obj = closest_intersection(P, L, 0.01, max, objs);
-			if (shadow_obj.obj.color)
+			shadow_obj = closest_intersection(P, L, 0.001, 2.0F, objs);
+			if (shadow_obj.obj.type != -1)
 				continue ;
 
-			n_dot_l = dot(N, L);
-			if (n_dot_l > 0)
-				coef += light[it].intens * n_dot_l / (fast_length(N) * fast_length(L));
+			ln = dot(L, N);
+			coef += light[it].intens * fmax(0.0F, ln);
 
 			if (s > 0)
 			{
-				R = 2.0F * N * n_dot_l - L;
-				r_dot_v = dot(R, V);
-				if (r_dot_v > 0)
-					coef += light[it].intens * pown(r_dot_v / (fast_length(R) * fast_length(V)), s);
+				R = 2.0F * N * dot(N, L) - L;
+				coef += light[it].intens * pown(fmax(0.0F, dot(R, V)), s);
 			}
 		}
 	return (coef);
@@ -253,60 +258,37 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 	float3		N;
 
 	float		light_coef;
-
-	float4		lc_color[REFLECT_DEPTH];
-	float		r[REFLECT_DEPTH];
-	float4		result_color = 0;
+	float3		color = 0;
+	float3		tmp;
+	float		r = 0;
 
 	int			it = -1;
-	int			depth = 0;
 
-	while (++it < REFLECT_DEPTH)
-	{
-		lc_color[it] = 0;
-		r[it] = 0;
-	}
-
-	it = -1;
 	while(++it < REFLECT_DEPTH)
 	{
-		depth++;
 		obj_data = closest_intersection(O, D, min, max, objs);
-		if (obj_data.obj.color == 0)
-		{
-			lc_color[it] = 0x000000;
-			r[it] = 0;
+		if (obj_data.obj.type == -1)
 			break ;
-		}
 		P = O + obj_data.closest_t * D;
 		N = calc_normal(P, obj_data.obj);
-		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, max, light, objs);
+
+		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, light, objs);
 		light_coef > 1 ? light_coef = 1 : 0;
 
-		lc_color[it].x = obj_data.obj.color >> 24 & 0xFF;
-		lc_color[it].y = obj_data.obj.color >> 16 & 0xFF;
-		lc_color[it].z = obj_data.obj.color >> 8 & 0xFF;
-		lc_color[it].w = obj_data.obj.color & 0xFF;
-		lc_color[it] *= light_coef;
-
-		r[it] = obj_data.obj.refl;
-		if (r[it] <= 0)
-		{
-			r[it] = 0;
+		tmp = (float3){obj_data.obj.color >> 16 & 0xFF,
+								obj_data.obj.color >> 8 & 0xFF,
+								obj_data.obj.color & 0xFF} * light_coef;
+		tmp *= (it == 0 ? (1.0F - r) : r);
+		color = sum_colors(color, tmp);
+		r = obj_data.obj.refl;
+		if (r <= 0)
 			break ;
-		}
 		R = reflect_ray(-D, N);
 		O = P;
 		D = R;
 		min = 0.001;
 	}
-	if (depth > 0)
-		result_color = lc_color[depth - 1] * (1 - r[depth - 1]);
-	it = depth - 1;
-	while (--it > 0)
-		result_color = (lc_color[it] * (1 - r[it]) + result_color) * r[it];
-	result_color += lc_color[0] * (1 - r[0]);
-	return ((uchar)result_color.y * 0x10000 + (uchar)result_color.z * 0x100 + (uchar)result_color.w);
+	return ((uchar)color.x * 0x10000 + (uchar)color.y * 0x100 + (uchar)color.z);
 }
 
 __kernel void
