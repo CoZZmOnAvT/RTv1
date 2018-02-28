@@ -21,7 +21,7 @@
 # define PLANE 3
 
 # define SMOOTH_LEVEL 1
-# define REFLECT_DEPTH 3
+# define REFLECT_DEPTH 1
 
 typedef unsigned char	t_uchar;
 typedef unsigned int	t_uint;

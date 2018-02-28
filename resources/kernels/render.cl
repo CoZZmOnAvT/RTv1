@@ -74,7 +74,6 @@ float3		rotate_point(float3 rot, float3 D)
 
 float3			calc_normal(float3 P, t_obj obj)
 {
-	float		scal;
 	float3		proj;
 	float3		OP = {obj.pos.x, obj.pos.y, obj.pos.z};
 	float3		OD = {obj.dir.x, obj.dir.y, obj.dir.z};
@@ -86,9 +85,9 @@ float3			calc_normal(float3 P, t_obj obj)
 	N = P - OP;
 	if (obj.type == CYLINDER || obj.type == CONE)
 	{
-		scal = dot(N, T);
-		proj = T * scal;
-		N -= proj;
+		N = P - OP;
+		proj = T * dot(N, T);
+		N = (N - proj) / fast_length(N);
 	}
 	N = N / fast_length(N);
 	return (N);
@@ -175,7 +174,7 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 	int			it;
 
 	obj_data.closest_t = INFINITY;
-	obj_data.obj.type = -1;
+	obj_data.obj.color = 0x0;
 	while (objs[++it].type != -1)
 	{
 		if (objs[it].type == SPHERE)
@@ -224,7 +223,7 @@ float			compute_lighting(float3 P, float3 N, float3 V, int s, float max,
 				L = (float3){light[it].dir.x, light[it].dir.y, light[it].dir.z};
 
 			shadow_obj = closest_intersection(P, L, 0.01, max, objs);
-			if (shadow_obj.obj.type != -1)
+			if (shadow_obj.obj.color)
 				continue ;
 
 			n_dot_l = dot(N, L);
@@ -273,7 +272,7 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 	{
 		depth++;
 		obj_data = closest_intersection(O, D, min, max, objs);
-		if (obj_data.obj.type == -1)
+		if (obj_data.obj.color == 0)
 		{
 			lc_color[it] = 0x000000;
 			r[it] = 0;
