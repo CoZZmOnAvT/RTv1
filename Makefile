@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/28 21:34:55 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/02 21:12:21 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ HDRS		=	$(addprefix $(HDRSDIR)/, rtv1.h structures.h)
 
 SRCSDIR		=	./sources
 
-SRCS		=	main.c events.c fps.c utils.c draw.c opencl.c sys_handler.c
+SRCS		=	main.c events.c fps.c utils.c draw.c opencl.c sys_handler.c		\
+				scene.c cleaner.c
 
 OBJDIR		=	./obj
 

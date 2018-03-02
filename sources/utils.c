@@ -6,26 +6,68 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:16:00 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/27 20:35:51 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/02 21:18:52 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-void	init_env(t_env *env)
+inline void	display_usage(t_uchar help)
 {
-	ft_bzero(env, sizeof(t_env));
-	env->win = sgl_new_window(PROGRAM_NAME, W_WIDTH, W_HEIGHT,
+	ft_printf("Usage: ./RTv1 [scene file]\n");
+	!help ? exit(0) : 0;
+	ft_printf("{cyan}Scene file format:{nc}\n"
+"  [Objects on scene] [Light on scene]\n"
+"  [{$camera_x;$camera_y;$camera_z}, {$camera_rx;$camera_ry;$camera_rz},"
+											" $camera_rotation_offset]\n"
+"  \n{cyan}Objects and Light:{nc}\n"
+"  {red}For sphere:{nc} sphere[$color, {$x;$y;$z}, $radius,"
+											" $specular, $reflect]\n"
+"  {red}For cylinder:{nc} cylinder[$color, {$x1;$y1;$z1}, {$x2;$y2;$z2},"
+											" $radius, $specular, $reflect]\n"
+"  {red}For cone:{nc} cone[$color, {$x1;$y1;$z1}, {$x2;$y2;$z2},"
+											" $radius, $specular, $reflect]\n"
+"  {red}For plane:{nc} plane[$color, {$x;$y;$z}, {$Nx;$Ny;$Nz},"
+											" $specular, $reflect]\n");
+	exit(0);
+}
+
+inline void	camera_rotate(t_env *env)
+{
+	env->cam->rot.ry = (int)(env->cam->rot.ry + 1) % 360;
+	env->cam->pos.x = 8 * sin(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.z = -8 * cos(ft_degtorad(env->cam->rot.ry));
+}
+
+void		resize_viewport(t_viewport *vwp, int width, int height)
+{
+	if (width > height)
+	{
+		vwp->h = 1.0;
+		vwp->w = (double)width / height;
+	}
+	else
+	{
+		vwp->w = 1.0;
+		vwp->h = (double)height / width;
+	}
+}
+
+void		init_env(t_env *e)
+{
+	ft_bzero(e, sizeof(t_env));
+	e->win = sgl_new_window(PROGRAM_NAME, W_WIDTH, W_HEIGHT,
 								SDL_WINDOW_RESIZABLE);
-	env->cam = ft_memalloc(sizeof(t_cam));
-	env->cam->pos.z = 8;
-	env->cam->pos.y = 3;
-	env->cam->rot.ry = 180;
-	env->cam->rot.rx = -15;
-	env->cam->vwp = ft_memalloc(sizeof(t_viewport));
-	env->cam->vwp->w = 1.77;
-	env->cam->vwp->h = 1.0;
-	env->cam->vwp->dist = 1;
-	env->smooth = 3;
-	env->rf_depth = 4;
+	e->cam = ft_memalloc(sizeof(t_cam));
+	e->cam->pos.z = 8;
+	e->cam->pos.y = 3;
+	e->cam->rot.ry = 180;
+	e->cam->rot.rx = -15;
+	e->cam->vwp = ft_memalloc(sizeof(t_viewport));
+	resize_viewport(e->cam->vwp, W_WIDTH, W_HEIGHT);
+	e->cam->vwp->dist = 1;
+	cl_init(&e->cl, CL_DEVICE_TYPE_GPU);
+	cl_parse_kernel(&e->cl, &e->cam->kl,
+		KERNEL_FOLDER"render.cl", "render_scene");
+	cl_reinit_mem(&e->cl, &e->cam->kl.mem, e->win->w * e->win->h * 4, 0);
 }

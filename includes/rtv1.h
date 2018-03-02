@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/27 14:06:46 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/02 20:36:38 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,22 @@ typedef struct	s_cam
 	t_viewport	*vwp;
 }				t_cam;
 
+typedef struct	s_scene
+{
+	cl_mem	objs;
+	cl_mem	light;
+	t_uint	objs_c;
+	t_uint	light_c;
+	t_obj	*objs_h;
+	t_light	*light_h;
+}				t_scene;
+
 typedef struct	s_env
 {
 	t_cl_core		cl;
 	t_sgl_window	*win;
 	t_cam			*cam;
-	cl_mem			objs;
-	cl_mem			light;
-	int				smooth;
-	int				rf_depth;
+	t_scene			scene;
 	t_ulong			flags;
 }				t_env;
 
@@ -83,8 +90,15 @@ void			render_scene(t_env *env);
 int				poll_events(t_env *env);
 
 /*
-**				Events.c
-**				↓↓↓↓↓↓↓↓
+**				Scene.c
+**				↓↓↓↓↓↓↓
+*/
+
+void			read_scene(t_env *env, int ac, char **av);
+
+/*
+**				Fps.c
+**				↓↓↓↓↓
 */
 
 void			display_fps(SDL_Renderer *rend);
@@ -93,6 +107,12 @@ void			display_fps(SDL_Renderer *rend);
 **				Utils.c
 **				↓↓↓↓↓↓↓
 */
+
+void			display_usage(t_uchar help);
+
+void			camera_rotate(t_env *env);
+
+void			resize_viewport(t_viewport *vwp, int width, int height);
 
 void			init_env(t_env *env);
 

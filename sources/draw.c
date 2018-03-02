@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:32:50 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 12:39:57 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/02 20:13:08 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void		render_scene(t_env *env)
 	(err = clSetKernelArg(env->cam->kl.kernel, 5, sizeof(t_viewport),
 		env->cam->vwp)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 6, sizeof(cl_mem),
-		&env->objs)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+		&env->scene.objs)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	(err = clSetKernelArg(env->cam->kl.kernel, 7, sizeof(cl_mem),
-		&env->light)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
+		&env->scene.light)) ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	err = clEnqueueNDRangeKernel(env->cl.queue, env->cam->kl.kernel, 2, NULL,
 		(size_t[3]){env->win->w, env->win->h, 0}, NULL, 0, NULL, NULL);
 	err ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
