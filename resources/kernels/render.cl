@@ -19,6 +19,11 @@ inline float3	reflect_ray(float3 R, float3 N)
 	return (2.0F * N * dot(N, R) - R);
 }
 
+inline float	deg_to_rad(float deg)
+{
+	return (deg * M_PI / 180.0F);
+}
+
 t_uint		avg_color(t_uint arr[], t_uint num)
 {
 	int		it = -1;
@@ -109,6 +114,18 @@ float3			sum_colors(float3 a, float3 b)
 	return (res);
 }
 
+float			fix_limits(float3 O, float3 D, float3 Va, t_obj obj, float ints)
+{
+	float3	Q;
+	float3	C = {obj.pos.x, obj.pos.y, obj.pos.z};
+	float3	CT = {obj.dir.x, obj.dir.y, obj.dir.z};
+
+	Q = O + D * ints;
+	if (dot(Va, Q - C) > 0 && dot(Va, Q - CT) < 0)
+		return (ints);
+	return (INFINITY);
+}
+
 /*-------------------------------INTERSECTIONS-------------------------------*/
 
 float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
@@ -131,12 +148,14 @@ float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
 	return ((float2){INFINITY, INFINITY});
 }
 
+
 float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
 {
 	float	descr;
 	float	k1;
 	float	k2;
 	float	k3;
+	float2	T;
 	float3	D_Va;
 	float3	OC_Va;
 	float3	OC;
@@ -144,7 +163,7 @@ float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
 	float3	CT = {obj.dir.x, obj.dir.y, obj.dir.z};
 	float3	Va = (CT - C) / fast_length(CT - C);
 
-	OC = O - C;
+	OC = O - CT;
 	D_Va = D - dot(D, Va) * Va;
 	OC_Va = OC - dot(OC, Va) * Va;
 	k1 = dot(D_Va, D_Va);
@@ -154,9 +173,51 @@ float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
 	descr = k2 * k2 - 4.0F * k1 * k3;
 	if (descr < 0)
 		return ((float2){INFINITY, INFINITY});
-	return ((float2){
+	T = (float2){
 		(-k2 + sqrt(descr)) / (2.0F * k1),
-		(-k2 - sqrt(descr)) / (2.0F * k1)});
+		(-k2 - sqrt(descr)) / (2.0F * k1)};
+	T.x = fix_limits(O, D, Va, obj, T.x);
+	T.y = fix_limits(O, D, Va, obj, T.y);
+	return (T);
+}
+
+float2			intersect_ray_cone(float3 O, float3 D, t_obj obj)
+{
+	float	descr;
+	float	alpha = deg_to_rad(obj.rad);
+	float	k1;
+	float	k2;
+	float	k3;
+	float	dva;
+	float	ocva;
+	float2	t_alpha = {sin(alpha), cos(alpha)};
+	float2	T;
+	float3	D_Va;
+	float3	OC_Va;
+	float3	OC;
+	float3	C = {obj.pos.x, obj.pos.y, obj.pos.z};
+	float3	CT = {obj.dir.x, obj.dir.y, obj.dir.z};
+	float3	Va = (CT - C) / fast_length(CT - C);
+
+	OC = O - CT;
+	dva = dot(D, Va);
+	ocva = dot(OC, Va);
+	D_Va = D - dva * Va;
+	OC_Va = OC - ocva * Va;
+
+	k1 = t_alpha.y * t_alpha.y * dot(D_Va, D_Va) - t_alpha.x * t_alpha.x * dva * dva;
+	k2 = 2.0F * t_alpha.y * t_alpha.y * dot(D_Va, OC_Va) - 2.0F * t_alpha.x * t_alpha.x * dva * ocva;
+	k3 = t_alpha.y * t_alpha.y * dot(OC_Va, OC_Va) - t_alpha.x * t_alpha.x * ocva * ocva;
+
+	descr = k2 * k2 - 4.0F * k1 * k3;
+	if (descr < 0)
+		return ((float2){INFINITY, INFINITY});
+	T = (float2){
+		(-k2 + sqrt(descr)) / (2.0F * k1),
+		(-k2 - sqrt(descr)) / (2.0F * k1)};
+	T.x = fix_limits(O, D, Va, obj, T.x);
+	T.y = fix_limits(O, D, Va, obj, T.y);
+	return (T);
 }
 
 float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
@@ -199,6 +260,8 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 			T = intersect_ray_cylinder(O, D, objs[it]);
 		else if (objs[it].type == PLANE)
 			T = intersect_ray_plane(O, D, objs[it]);
+		else if (objs[it].type == CONE)
+			T = intersect_ray_cone(O, D, objs[it]);
 		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
 		{
 			obj_data.closest_t = T.x;
