@@ -101,6 +101,9 @@ float3			sum_colors(float3 a, float3 b)
 	res.x > 255 ? res.x = 255 : 0;
 	res.y > 255 ? res.y = 255 : 0;
 	res.z > 255 ? res.z = 255 : 0;
+	res.x < 0 ? res.x = 0 : 0;
+	res.y < 0 ? res.y = 0 : 0;
+	res.z < 0 ? res.z = 0 : 0;
 	return (res);
 }
 
@@ -258,9 +261,9 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 	float3		N;
 
 	float		light_coef;
-	float3		color = 0;
-	float3		tmp;
-	float		r = 0;
+	float		r[REFLECT_DEPTH] = {0};
+	float3		loc_color[REFLECT_DEPTH] = {0};
+	float3		ret_color = 0;
 
 	int			it = -1;
 
@@ -275,20 +278,26 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, light, objs);
 		light_coef > 1 ? light_coef = 1 : 0;
 
-		tmp = (float3){obj_data.obj.color >> 16 & 0xFF,
+		loc_color[it] = (float3){obj_data.obj.color >> 16 & 0xFF,
 								obj_data.obj.color >> 8 & 0xFF,
-								obj_data.obj.color & 0xFF} * light_coef;
-		tmp *= (it == 0 ? (1.0F - r) : r);
-		color = sum_colors(color, tmp);
-		r = obj_data.obj.refl;
-		if (r <= 0)
+								obj_data.obj.color & 0xFF};
+		loc_color[it] *= light_coef;
+		r[it] = obj_data.obj.refl;
+		if (r[it] <= 0)
+		{
+			r[it++] = r[it - 1];
 			break ;
+		}
+		loc_color[it] *= (1.0F - r[it]);
 		R = reflect_ray(-D, N);
 		O = P;
 		D = R;
 		min = 0.001;
 	}
-	return ((uchar)color.x * 0x10000 + (uchar)color.y * 0x100 + (uchar)color.z);
+	while (--it > 0)
+		ret_color = sum_colors(ret_color, loc_color[it]) * r[it - 1];
+	ret_color = sum_colors(ret_color, loc_color[0] * (1.0F - r[0]));
+	return ((uint)ret_color.x * 0x10000 + (uint)ret_color.y * 0x100 + (uint)ret_color.z);
 }
 
 __kernel void
