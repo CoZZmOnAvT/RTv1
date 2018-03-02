@@ -78,18 +78,20 @@ float3			calc_normal(float3 P, t_obj obj)
 	float3		OP = {obj.pos.x, obj.pos.y, obj.pos.z};
 	float3		OD = {obj.dir.x, obj.dir.y, obj.dir.z};
 	float3		N;
-	float3		T = {0.0F, 1.0F, 0.0F};
+	float3		T;
 
-	if (obj.type == PLANE)
-		return (OD);
 	N = P - OP;
-	if (obj.type == CYLINDER || obj.type == CONE)
+	if (obj.type == PLANE)
+		return (OD / fast_length(OD));
+	else if (obj.type == CYLINDER || obj.type == CONE)
 	{
-		N = P - OP;
+		T = (OD - OP) / fast_length(OD - OP);
 		proj = T * dot(N, T);
-		N = (N - proj) / fast_length(N);
+		N -= proj;
+		N /= fast_length(N);
 	}
-	N = N / fast_length(N);
+	else if (obj.type == SPHERE)
+		N /= fast_length(N);
 	return (N);
 }
 
@@ -131,10 +133,10 @@ float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
 
 float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
 {
-	double	descr;
-	double	k1;
-	double	k2;
-	double	k3;
+	float	descr;
+	float	k1;
+	float	k2;
+	float	k3;
 	float3	D_Va;
 	float3	OC_Va;
 	float3	OC;
@@ -159,10 +161,10 @@ float2			intersect_ray_cylinder(float3 O, float3 D, t_obj obj)
 
 float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
 {
-	double	descr;
-	double	k1;
-	double	k2;
-	double	k3;
+	float	descr;
+	float	k1;
+	float	k2;
+	float	k3;
 	float3	OC;
 	float3	C = (float3){obj.pos.x, obj.pos.y, obj.pos.z};
 
@@ -221,29 +223,32 @@ float		compute_lighting(float3 P, float3 N, float3 V, int s,
 	float3		R;
 	float		coef;
 	float		ln;
+	float		rv;
 	int			it;
 
-	coef = 0;
+	coef = 0.0F;
 	it = -1;
 	while (light[++it].type != -1)
 		if (light[it].type == 0)
 			coef += light[it].intens;
-		else
+		else if (light[it].type == 1)
 		{
 			L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
-			L /= fast_length(L);
 
-			shadow_obj = closest_intersection(P, L, 0.001, 2.0F, objs);
+			shadow_obj = closest_intersection(P, L, 0.001F, 1.0F, objs);
 			if (shadow_obj.obj.type != -1)
 				continue ;
 
 			ln = dot(L, N);
-			coef += light[it].intens * fmax(0.0F, ln);
+			if (ln > 0)
+				coef += light[it].intens * ln / (fast_length(N) * fast_length(L));
 
 			if (s > 0)
 			{
-				R = 2.0F * N * dot(N, L) - L;
-				coef += light[it].intens * pown(fmax(0.0F, dot(R, V)), s);
+				R = reflect_ray(L, N);
+				rv = dot(R, V);
+				if (rv > 0)
+					coef += light[it].intens * pown(rv / (fast_length(R) * fast_length(V)), s);
 			}
 		}
 	return (coef);
