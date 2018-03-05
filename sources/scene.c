@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 18:21:32 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 21:09:27 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,26 @@ static inline int	count_splited(char **arr)
 
 static void			scene_configuration(t_env *env, int fd)
 {
+	char	*str;
+	char	*tmp;
+	char	**arr;
+	t_point	p_tmp;
 
+	if (ft_get_next_line(fd, &str) <= 0)
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	if (!(tmp = ft_get_content(str, '[', ']')))
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	ft_memdel((void **)&str);
+	if (count_splited((arr = ft_strsplit(tmp, ','))) != 3)
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	ft_memdel((void **)&tmp);
+	env->cam->rot_os = ABS(ft_atoi(arr[2]));
+	env->cam->pos = sgl_atop(arr[0]);
+	p_tmp = sgl_atop(arr[1]);
+	if (!sgl_check_point(env->cam->pos) || !sgl_check_point(p_tmp))
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	env->cam->rot = *(t_rotate *)&p_tmp;
+	free_splited(arr);
 }
 
 void				read_scene(t_env *env, int ac, char **av)

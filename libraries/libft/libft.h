@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/04 13:45:39 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/02/02 12:58:41 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 21:08:14 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,6 +288,10 @@ void			ft_swap_l(long *a, long *b);
 void			ft_swap_f(double *a, double *b);
 
 double			ft_get_fractional(double num);
+
+char			*ft_get_content(const char *src, char open, char close);
+
+double			ft_atof(const char *src);
 
 /*
 **		Circular double linked list functions

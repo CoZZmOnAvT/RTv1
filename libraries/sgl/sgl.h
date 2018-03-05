@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 21:12:33 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 21:02:55 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,5 +108,9 @@ void			sgl_render_surface(SDL_Renderer *renderer, SDL_Surface *surface,
 									t_point align);
 
 void			sgl_vsync(void);
+
+t_point			sgl_atop(const char *src);
+
+int				sgl_check_point(t_point src);
 
 #endif

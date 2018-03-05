@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:16:00 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 21:18:52 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 20:51:49 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ inline void	display_usage(t_uchar help)
 inline void	camera_rotate(t_env *env)
 {
 	env->cam->rot.ry = (int)(env->cam->rot.ry + 1) % 360;
-	env->cam->pos.x = 8 * sin(ft_degtorad(env->cam->rot.ry));
-	env->cam->pos.z = -8 * cos(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.x = env->cam->rot_os * sin(ft_degtorad(env->cam->rot.ry));
+	env->cam->pos.z = -(env->cam->rot_os * cos(ft_degtorad(env->cam->rot.ry)));
 }
 
 void		resize_viewport(t_viewport *vwp, int width, int height)
@@ -59,10 +59,6 @@ void		init_env(t_env *e)
 	e->win = sgl_new_window(PROGRAM_NAME, W_WIDTH, W_HEIGHT,
 								SDL_WINDOW_RESIZABLE);
 	e->cam = ft_memalloc(sizeof(t_cam));
-	e->cam->pos.z = 8;
-	e->cam->pos.y = 3;
-	e->cam->rot.ry = 180;
-	e->cam->rot.rx = -15;
 	e->cam->vwp = ft_memalloc(sizeof(t_viewport));
 	resize_viewport(e->cam->vwp, W_WIDTH, W_HEIGHT);
 	e->cam->vwp->dist = 1;

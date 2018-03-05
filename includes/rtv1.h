@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 18:06:50 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 20:09:34 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct	s_cam
 {
 	t_point		pos;
 	t_rotate	rot;
+	t_uint		rot_os;
 	t_cl_kl		kl;
 	t_viewport	*vwp;
 }				t_cam;

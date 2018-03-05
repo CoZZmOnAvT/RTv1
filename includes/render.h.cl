@@ -20,7 +20,7 @@
 # define CONE 2
 # define PLANE 3
 
-# define SMOOTH_LEVEL 3
+# define SMOOTH_LEVEL 1
 # define REFLECT_DEPTH 4
 
 typedef unsigned char	t_uchar;

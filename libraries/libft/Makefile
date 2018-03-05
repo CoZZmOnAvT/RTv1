@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/01 13:50:42 by pgritsen          #+#    #+#              #
-#    Updated: 2018/02/02 12:47:53 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/05 21:03:08 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,13 +36,13 @@ SRCS		= 	ft_lstnew.c ft_strcat.c ft_strncpy.c ft_memalloc.c ft_strchr.c		\
 				ft_nbrblen.c ft_putnp.c ft_strnplen.c ft_degtorad.c ft_atol_base.c	\
 				ft_swap.c ft_dlstnew.c ft_dlstpush.c ft_dlstpush_back.c				\
 				ft_dlstdelelem.c ft_dlstsize.c ft_dlstpop.c ft_dlstpop_back.c		\
-				ft_dlstclear.c ft_get_fractional.c
+				ft_dlstclear.c ft_get_fractional.c ft_get_content.c ft_atof.c
 
 HDRS		=	ftprintf.h libft.h ftstring.h
 
 OBJFOLDER	= 	obj
 
-OBJECTS 	= 	$(addprefix $(OBJFOLDER)/, $(SRCS:.c=.o)) 
+OBJECTS 	= 	$(addprefix $(OBJFOLDER)/, $(SRCS:.c=.o))
 
 all: $(NAME)
 
@@ -57,7 +57,7 @@ $(OBJFOLDER):
 	@mkdir $(OBJFOLDER)
 	@printf "\033[32m[DONE]\033[0m\n"
 
-$(OBJECTS): $(OBJFOLDER)/%.o : %.c
+$(OBJECTS): $(OBJFOLDER)/%.o : %.c $(HDRS)
 	@printf "\033[32m[Compiling $<].......\033[0m"
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf "\033[32m[DONE]\033[0m\n"
