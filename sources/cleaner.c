@@ -6,10 +6,18 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:32:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 20:32:50 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 18:06:55 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
+inline void free_splited(char **arr)
+{
+	int		i;
 
+	i = -1;
+	while(arr[++i])
+		free(arr[i]);
+	free(arr);
+}

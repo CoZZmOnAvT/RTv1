@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 20:36:38 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/05 18:06:50 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,13 @@ void			cl_init(t_cl_core *cl, cl_device_type dev_type);
 
 void			cl_parse_kernel(t_cl_core *cl, t_cl_kl *kl,
 						const char *kernel_name, const char *func_name);
+
+/*
+**				Cleaner.c
+**				↓↓↓↓↓↓↓↓↓
+*/
+
+void			free_splited(char **arr);
 
 /*
 **				Sys_handler.c
