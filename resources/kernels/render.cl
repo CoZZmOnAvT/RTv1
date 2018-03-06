@@ -268,7 +268,7 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 
 	obj_data.closest_t = INFINITY;
 	obj_data.obj.type = -1;
-	while (objs[++it].type != -1)
+	while (objs[++it].type >= 0)
 	{
 		T = choose_intersection(O, D, objs[it], objs[it].type);
 		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
@@ -300,7 +300,7 @@ float		compute_lighting(float3 P, float3 N, float3 V, int s,
 
 	coef = 0.0F;
 	it = -1;
-	while (light[++it].type != -1)
+	while (light[++it].type >= 0)
 		if (light[it].type == 0)
 			coef += light[it].intens;
 		else if (light[it].type == 1)
@@ -308,7 +308,7 @@ float		compute_lighting(float3 P, float3 N, float3 V, int s,
 			L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
 
 			shadow_obj = closest_intersection(P, L, 0.001F, 1.0F, objs);
-			if (shadow_obj.obj.type != -1)
+			if (shadow_obj.obj.type >= 0)
 				continue ;
 
 			ln = dot(L, N);
@@ -347,7 +347,7 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 	while(++it < REFLECT_DEPTH)
 	{
 		obj_data = closest_intersection(O, D, min, max, objs);
-		if (obj_data.obj.type == -1)
+		if (obj_data.obj.type < 0)
 			break ;
 		P = O + obj_data.closest_t * D;
 		N = calc_normal(P, obj_data.obj);
