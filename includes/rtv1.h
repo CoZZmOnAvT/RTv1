@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:31:24 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:42:04 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,8 @@ void			init_env(t_env *env);
 **				↓↓↓↓↓↓↓↓
 */
 
-void			cl_reinit_mem(t_cl_core *cl, cl_mem *mem, size_t size, void *ptr);
+void			cl_reinit_mem(t_cl_core *cl, cl_mem *mem,
+								size_t size, void *ptr);
 
 void			cl_init(t_cl_core *cl, cl_device_type dev_type);
 

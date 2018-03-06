@@ -6,15 +6,15 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:02 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:35:24 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:41:37 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "rtv1.h"
+#include "rtv1.h"
 
-int					main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_env			env;
+	t_env	env;
 
 	sgl_init();
 	init_env(&env);

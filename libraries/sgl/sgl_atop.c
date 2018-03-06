@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 20:26:39 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 21:09:06 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:44:03 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static inline void	free_splited(char **arr)
 	int		i;
 
 	i = -1;
-	while(arr[++i])
+	while (arr[++i])
 		free(arr[i]);
 	free(arr);
 }

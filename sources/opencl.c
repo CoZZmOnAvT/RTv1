@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/26 21:20:01 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 16:48:47 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:41:49 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	build_debug(t_cl_core *cl, t_cl_kl *kl)
 
 	clGetProgramBuildInfo(kl->program, cl->device, CL_PROGRAM_BUILD_LOG, 0,
 													NULL, &log_size);
-	log_msg = (char *) malloc(log_size);
+	log_msg = (char *)malloc(log_size);
 	clGetProgramBuildInfo(kl->program, cl->device, CL_PROGRAM_BUILD_LOG,
 													log_size, log_msg, NULL);
 	ft_printf("%s\n", log_msg);

@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:35:18 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:36:36 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static void			read_object(t_env *env, char *data, int index)
 	env->scene.objs_h[index].rad = ABS(ft_atof(arr[4]));
 	env->scene.objs_h[index].spec = ABS(ft_atoi(arr[5]));
 	env->scene.objs_h[index].refl = ABS(ft_atof(arr[6]));
+	free_splited(arr);
 }
 
 static void			read_light(t_env *env, char *data, int index)
@@ -43,6 +44,7 @@ static void			read_light(t_env *env, char *data, int index)
 	env->scene.light_h[index].pos = sgl_atop(arr[2]);
 	if (!sgl_check_point(env->scene.light_h[index].pos))
 		ft_err_handler("Scene broken!", 0, 0, 1);
+	free_splited(arr);
 }
 
 static void			procced_data(t_env *env, int fd)
@@ -61,6 +63,7 @@ static void			procced_data(t_env *env, int fd)
 			read_light(env, ft_get_content(str, '[', ']'), l_c - 1);
 		if (o_c > env->scene.objs_c || l_c > env->scene.light_c)
 			ft_err_handler("Scene broken!", 0, 0, 1);
+		ft_memdel((void **)&str);
 	}
 	if (o_c != env->scene.objs_c || l_c != env->scene.light_c)
 		ft_err_handler("Scene broken!", 0, 0, 1);

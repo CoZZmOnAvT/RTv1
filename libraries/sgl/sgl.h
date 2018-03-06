@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 21:02:55 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:45:23 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ t_uint			sgl_get_tex(SDL_Texture *tex, int x, int y);
 t_uint			sgl_get_surf(SDL_Surface *surf, int x, int y);
 
 void			sgl_draw_line(t_point a, t_point b, t_uint color,
-								 SDL_Renderer *rend);
+								SDL_Renderer *rend);
 
 void			sgl_draw_str(const char *string, t_font *font_data,
 								t_point align, SDL_Renderer *rend);
@@ -112,5 +112,7 @@ void			sgl_vsync(void);
 t_point			sgl_atop(const char *src);
 
 int				sgl_check_point(t_point src);
+
+t_point			sgl_rotate_point(t_point p, t_rotate angle);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/03/05 21:03:16 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/06 17:45:28 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ SRCS		=	sgl_draw_line.c sgl_plot_rend.c sgl_plot_surf.c sgl_new_window.c	\
 				sgl_get_window.c sgl_init.c sgl_get_font.c sgl_add_font.c sgl_quit.c\
 				sgl_draw_str.c sgl_get_window_by_id.c s_sys_handler.c sgl_vsync.c	\
 				sgl_get_surf.c sgl_get_tex.c sgl_win_resize.c sgl_atop.c			\
-				sgl_check_point.c
+				sgl_check_point.c sgl_rotate_point.c
 
 OBJDIR		=	obj
 
