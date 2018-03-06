@@ -31,7 +31,7 @@ t_uint		avg_color(t_uint arr[], t_uint num)
 	t_uint	g = 0;
 	t_uint	b = 0;
 
-	while(++it < num)
+	while(++it < (int)num)
 	{
 		r += arr[it] >> 16 & 0xFF;
 		g += arr[it] >> 8 & 0xFF;
@@ -43,7 +43,7 @@ t_uint		avg_color(t_uint arr[], t_uint num)
 	return (r * 0x10000 + g * 0x100 + b);
 }
 
-float3		canvas_to_viewport(float x, float y, t_viewport vwp, t_uint w_width, t_uint w_height)
+float3		canDs_to_viewport(float x, float y, t_viewport vwp, t_uint w_width, t_uint w_height)
 {
 	return ((float3){x * vwp.w / w_width, y * vwp.h / w_height, vwp.dist});
 }
@@ -128,23 +128,26 @@ float			fix_limits(float3 O, float3 D, float3 Va, t_obj obj, float ints)
 
 /*-------------------------------INTERSECTIONS-------------------------------*/
 
-float2	intersect_ray_plane(float3 O, float3 D, t_obj obj)
+float2			intersect_ray_plane(float3 O, float3 D, t_obj obj)
 {
 	float3	OP = {obj.pos.x, obj.pos.y, obj.pos.z};
 	float3	OD = {obj.dir.x, obj.dir.y, obj.dir.z};
 	float3	OC;
 	float2	T;
-	float	k[2];
+	float	k1;
+	float	k2;
 
+	OD /= fast_length(OD);
 	OC = O - OP;
-	k[0] = dot(D, OD);
-	k[1] = dot(OC, OD);
-	if (k[0])
+	k1 = dot(D, OD);
+	k2 = dot(OC, OD);
+	if (k1 != 0)
 	{
-		T.x = -k[1] / k[0];
+		T.x = -k2 / k1;
 		T.y = INFINITY;
 		return (T);
 	}
+	fix_limits(O, O, O, obj, 0);
 	return ((float2){INFINITY, INFINITY});
 }
 
@@ -220,14 +223,14 @@ float2			intersect_ray_cone(float3 O, float3 D, t_obj obj)
 	return (T);
 }
 
-float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
+float2	intersect_ray_sphere(float3 O, float3 D, t_obj obj)
 {
 	float	descr;
 	float	k1;
 	float	k2;
 	float	k3;
 	float3	OC;
-	float3	C = (float3){obj.pos.x, obj.pos.y, obj.pos.z};
+	float3	C = {obj.pos.x, obj.pos.y, obj.pos.z};
 
 	OC = O - C;
 
@@ -238,6 +241,7 @@ float2			intersect_ray_sphere(float3 O, float3 D, t_obj obj)
 	descr = k2 * k2 - 4.0F * k1 * k3;
 	if (descr < 0)
 		return ((float2){INFINITY, INFINITY});
+	fix_limits(O, O, O, obj, 0);
 	return ((float2){
 		(-k2 + sqrt(descr)) / (2.0F * k1),
 		(-k2 - sqrt(descr)) / (2.0F * k1)});
@@ -256,10 +260,10 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 	{
 		if (objs[it].type == SPHERE)
 			T = intersect_ray_sphere(O, D, objs[it]);
-		else if (objs[it].type == CYLINDER)
-			T = intersect_ray_cylinder(O, D, objs[it]);
 		else if (objs[it].type == PLANE)
 			T = intersect_ray_plane(O, D, objs[it]);
+		else if (objs[it].type == CYLINDER)
+			T = intersect_ray_cylinder(O, D, objs[it]);
 		else if (objs[it].type == CONE)
 			T = intersect_ray_cone(O, D, objs[it]);
 		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
@@ -390,7 +394,7 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 		ity = -1;
 		while (++ity < SMOOTH_LEVEL)
 		{
-			D = rotate_point(CR, canvas_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
+			D = rotate_point(CR, canDs_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
 								y + (ity + 0.5) / SMOOTH_LEVEL, vwp, w_width, w_height));
 			color[ity * SMOOTH_LEVEL + itx] = trace_ray(O, D, 1, INFINITY, objs, light);
 		}

@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/26 21:20:01 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 12:39:12 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 15:33:02 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void		cl_reinit_mem(t_cl_core *cl, cl_mem *mem, size_t size, void *ptr)
 		!(*mem = clCreateBuffer(cl->context, CL_MEM_READ_WRITE, size, 0, 0))
 			? ft_err_handler("OpenCl", "Can't allocate memmory!", 0, 1) : 0;
 	else
-		!(*mem = clCreateBuffer(cl->context, CL_MEM_USE_HOST_PTR, size, ptr, 0))
+		!(*mem = clCreateBuffer(cl->context, CL_MEM_COPY_HOST_PTR, size, ptr, 0))
 			? ft_err_handler("OpenCl", "Can't allocate memmory!", 0, 1) : 0;
 }
 
