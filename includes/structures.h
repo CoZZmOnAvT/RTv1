@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/24 13:21:23 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/02 17:50:21 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:20:30 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ typedef struct	s_light
 	char	type;
 	float	intens;
 	t_point	pos;
-	t_point	dir;
 }				t_light;
 
 typedef struct	s_obj

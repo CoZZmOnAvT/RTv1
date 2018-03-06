@@ -6,20 +6,68 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 21:09:27 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:35:18 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
 
-static inline int	count_splited(char **arr)
+static void			read_object(t_env *env, char *data, int index)
 {
-	int	count;
+	char	**arr;
 
-	count = 0;
-	while (arr[count])
-		count++;
-	return (count);
+	if (count_splited((arr = ft_strsplit(data, ' '))) != 7)
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	ft_memdel((void **)&data);
+	env->scene.objs_h[index].type = ABS(ft_atoi(arr[0]));
+	env->scene.objs_h[index].color = ft_atol_base(arr[1], 16);
+	env->scene.objs_h[index].pos = sgl_atop(arr[2]);
+	env->scene.objs_h[index].dir = sgl_atop(arr[3]);
+	if (!sgl_check_point(env->scene.objs_h[index].pos)
+		|| !sgl_check_point(env->scene.objs_h[index].dir))
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	env->scene.objs_h[index].rad = ABS(ft_atof(arr[4]));
+	env->scene.objs_h[index].spec = ABS(ft_atoi(arr[5]));
+	env->scene.objs_h[index].refl = ABS(ft_atof(arr[6]));
+}
+
+static void			read_light(t_env *env, char *data, int index)
+{
+	char	**arr;
+
+	if (count_splited((arr = ft_strsplit(data, ' '))) != 3)
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	ft_memdel((void **)&data);
+	env->scene.light_h[index].type = ABS(ft_atoi(arr[0]));
+	env->scene.light_h[index].intens = ABS(ft_atof(arr[1]));
+	env->scene.light_h[index].pos = sgl_atop(arr[2]);
+	if (!sgl_check_point(env->scene.light_h[index].pos))
+		ft_err_handler("Scene broken!", 0, 0, 1);
+}
+
+static void			procced_data(t_env *env, int fd)
+{
+	char	*str;
+	t_uint	l_c;
+	t_uint	o_c;
+
+	l_c = 0;
+	o_c = 0;
+	while (ft_get_next_line(fd, &str) > 0)
+	{
+		if (!ft_strncmp(str, "object", 6) && ++o_c <= env->scene.objs_c)
+			read_object(env, ft_get_content(str, '[', ']'), o_c - 1);
+		else if (!ft_strncmp(str, "light", 5) && ++l_c <= env->scene.light_c)
+			read_light(env, ft_get_content(str, '[', ']'), l_c - 1);
+		if (o_c > env->scene.objs_c || l_c > env->scene.light_c)
+			ft_err_handler("Scene broken!", 0, 0, 1);
+	}
+	if (o_c != env->scene.objs_c || l_c != env->scene.light_c)
+		ft_err_handler("Scene broken!", 0, 0, 1);
+	cl_reinit_mem(&env->cl, &env->scene.objs,
+		sizeof(t_obj) * (env->scene.objs_c + 1), env->scene.objs_h);
+	cl_reinit_mem(&env->cl, &env->scene.light,
+		sizeof(t_light) * (env->scene.light_c + 1), env->scene.light_h);
 }
 
 static void			scene_configuration(t_env *env, int fd)
@@ -65,7 +113,10 @@ void				read_scene(t_env *env, int ac, char **av)
 		? ft_err_handler("malloc", "can't allocate region!", 0, 1) : 0;
 	!(env->scene.light_h = malloc(sizeof(t_light) * (env->scene.light_c + 1)))
 		? ft_err_handler("malloc", "can't allocate region!", 0, 1) : 0;
+	env->scene.objs_h[env->scene.objs_c].type = -1;
+	env->scene.light_h[env->scene.light_c].type = -1;
 	free_splited(tmp);
 	ft_memdel((void **)&str);
 	scene_configuration(env, fd);
+	procced_data(env, fd);
 }

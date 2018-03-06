@@ -66,6 +66,7 @@ float2		intersect_ray_plane(float3 O, float3 D, t_obj obj);
 float2		intersect_ray_cylinder(float3 O, float3 D, t_obj obj);
 float2		intersect_ray_cone(float3 O, float3 D, t_obj obj);
 float2		intersect_ray_sphere(float3 O, float3 D, t_obj obj);
+float2		choose_intersection(float3 O, float3 D, t_obj obj, int type);
 t_obj_data	closest_intersection(float3 O, float3 D, float min, float max,
 								__constant t_obj *objs);
 

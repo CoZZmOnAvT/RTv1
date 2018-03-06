@@ -6,11 +6,21 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:32:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 18:06:55 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:03:43 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
+
+inline int	count_splited(char **arr)
+{
+	int	count;
+
+	count = 0;
+	while (arr[count])
+		count++;
+	return (count);
+}
 
 inline void free_splited(char **arr)
 {

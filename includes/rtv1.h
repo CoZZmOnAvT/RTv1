@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/05 20:09:34 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/06 17:31:24 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,6 @@ typedef struct	s_env
 	t_ulong			flags;
 }				t_env;
 
-extern t_obj	objs[];
-extern t_light	light[];
-
 /*
 **				Draw.c
 **				↓↓↓↓↓↓
@@ -133,6 +130,8 @@ void			cl_parse_kernel(t_cl_core *cl, t_cl_kl *kl,
 **				Cleaner.c
 **				↓↓↓↓↓↓↓↓↓
 */
+
+int				count_splited(char **arr);
 
 void			free_splited(char **arr);
 
