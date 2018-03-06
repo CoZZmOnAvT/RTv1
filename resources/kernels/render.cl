@@ -147,7 +147,6 @@ float2			intersect_ray_plane(float3 O, float3 D, t_obj obj)
 		T.y = INFINITY;
 		return (T);
 	}
-	fix_limits(O, O, O, obj, 0);
 	return ((float2){INFINITY, INFINITY});
 }
 
@@ -241,10 +240,23 @@ float2	intersect_ray_sphere(float3 O, float3 D, t_obj obj)
 	descr = k2 * k2 - 4.0F * k1 * k3;
 	if (descr < 0)
 		return ((float2){INFINITY, INFINITY});
-	fix_limits(O, O, O, obj, 0);
 	return ((float2){
 		(-k2 + sqrt(descr)) / (2.0F * k1),
 		(-k2 - sqrt(descr)) / (2.0F * k1)});
+}
+
+float2			choose_intersection(float3 O, float3 D, t_obj obj, int type)
+{
+	if (type == SPHERE)
+		return (intersect_ray_sphere(O, D, obj));
+	else if (type == PLANE)
+		return (intersect_ray_plane(O, D, obj));
+	else if (type == CYLINDER)
+		return (intersect_ray_cylinder(O, D, obj));
+	else if (type == CONE)
+		return (intersect_ray_cone(O, D, obj));
+	else
+		return ((float2){INFINITY, INFINITY});
 }
 
 t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
@@ -258,14 +270,7 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 	obj_data.obj.type = -1;
 	while (objs[++it].type != -1)
 	{
-		if (objs[it].type == SPHERE)
-			T = intersect_ray_sphere(O, D, objs[it]);
-		else if (objs[it].type == PLANE)
-			T = intersect_ray_plane(O, D, objs[it]);
-		else if (objs[it].type == CYLINDER)
-			T = intersect_ray_cylinder(O, D, objs[it]);
-		else if (objs[it].type == CONE)
-			T = intersect_ray_cone(O, D, objs[it]);
+		T = choose_intersection(O, D, objs[it], objs[it].type);
 		if (T.x >= min && T.x <= max && T.x < obj_data.closest_t)
 		{
 			obj_data.closest_t = T.x;

@@ -13,8 +13,6 @@
 #ifndef RENDER_H
 # define RENDER_H
 
-# pragma OPENCL EXTENSION cl_khr_fp64 : enable
-
 # define SPHERE 0
 # define CYLINDER 1
 # define CONE 2
