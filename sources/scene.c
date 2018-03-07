@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:36:36 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/07 13:19:17 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ static void			read_object(t_env *env, char *data, int index)
 {
 	char	**arr;
 
-	if (count_splited((arr = ft_strsplit(data, ' '))) != 7)
-		ft_err_handler("Scene broken!", 0, 0, 1);
+	if (count_splited((arr = ft_strsplit(data, ','))) != 7)
+		ft_err_handler("Object broken!", 0, 0, 1);
 	ft_memdel((void **)&data);
 	env->scene.objs_h[index].type = ABS(ft_atoi(arr[0]));
 	env->scene.objs_h[index].color = ft_atol_base(arr[1], 16);
@@ -25,7 +25,7 @@ static void			read_object(t_env *env, char *data, int index)
 	env->scene.objs_h[index].dir = sgl_atop(arr[3]);
 	if (!sgl_check_point(env->scene.objs_h[index].pos)
 		|| !sgl_check_point(env->scene.objs_h[index].dir))
-		ft_err_handler("Scene broken!", 0, 0, 1);
+		ft_err_handler("Object broken!", 0, 0, 1);
 	env->scene.objs_h[index].rad = ABS(ft_atof(arr[4]));
 	env->scene.objs_h[index].spec = ABS(ft_atoi(arr[5]));
 	env->scene.objs_h[index].refl = ABS(ft_atof(arr[6]));
@@ -36,14 +36,14 @@ static void			read_light(t_env *env, char *data, int index)
 {
 	char	**arr;
 
-	if (count_splited((arr = ft_strsplit(data, ' '))) != 3)
-		ft_err_handler("Scene broken!", 0, 0, 1);
+	if (count_splited((arr = ft_strsplit(data, ','))) != 3)
+		ft_err_handler("Light broken!", 0, 0, 1);
 	ft_memdel((void **)&data);
 	env->scene.light_h[index].type = ABS(ft_atoi(arr[0]));
 	env->scene.light_h[index].intens = ABS(ft_atof(arr[1]));
 	env->scene.light_h[index].pos = sgl_atop(arr[2]);
 	if (!sgl_check_point(env->scene.light_h[index].pos))
-		ft_err_handler("Scene broken!", 0, 0, 1);
+		ft_err_handler("Light broken!", 0, 0, 1);
 	free_splited(arr);
 }
 
