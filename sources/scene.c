@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/07 13:19:17 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/07 14:05:41 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ static void			procced_data(t_env *env, int fd)
 			ft_err_handler("Scene broken!", 0, 0, 1);
 		ft_memdel((void **)&str);
 	}
+	ft_memdel((void **)&str);
 	if (o_c != env->scene.objs_c || l_c != env->scene.light_c)
 		ft_err_handler("Scene broken!", 0, 0, 1);
 	cl_reinit_mem(&env->cl, &env->scene.objs,
