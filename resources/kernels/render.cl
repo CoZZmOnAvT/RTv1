@@ -287,10 +287,11 @@ t_obj_data		closest_intersection(float3 O, float3 D, float min, float max,
 
 /*-----------------------------------LIGHT-----------------------------------*/
 
-float		compute_lighting(float3 P, float3 N, float3 V, int s,
+float		compute_lighting(float3 P, float3 N, float3 O, float3 V, int s,
 						__constant t_light *light, __constant t_obj *objs)
 {
 	t_obj_data	shadow_obj;
+	float3		OD;
 	float3		L;
 	float3		R;
 	float		coef;
@@ -307,6 +308,8 @@ float		compute_lighting(float3 P, float3 N, float3 V, int s,
 		{
 			L = (float3){light[it].pos.x - P.x, light[it].pos.y - P.y, light[it].pos.z - P.z};
 
+			if (dot(V, N) < 0)
+				continue ;
 			shadow_obj = closest_intersection(P, L, 0.001F, 1.0F, objs);
 			if (shadow_obj.obj.type >= 0)
 				continue ;
@@ -352,7 +355,7 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 		P = O + obj_data.closest_t * D;
 		N = calc_normal(P, obj_data.obj);
 
-		light_coef = compute_lighting(P, N, -D, obj_data.obj.spec, light, objs);
+		light_coef = compute_lighting(P, N, O, -D, obj_data.obj.spec, light, objs);
 		light_coef > 1 ? light_coef = 1 : 0;
 
 		loc_color[it] = (float3){obj_data.obj.color >> 16 & 0xFF,

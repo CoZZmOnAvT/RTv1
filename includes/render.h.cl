@@ -72,7 +72,7 @@ t_obj_data	closest_intersection(float3 O, float3 D, float min, float max,
 
 /*-----------------------------------LIGHT------------------------------------*/
 
-float		compute_lighting(float3 P, float3 N, float3 V, int s,
+float		compute_lighting(float3 P, float3 N, float3 O, float3 V, int s,
 							__constant t_light *light, __constant t_obj *objs);
 
 /*---------------------------------RAYTRACING---------------------------------*/
