@@ -77,22 +77,22 @@ float3		rotate_point(float3 rot, float3 D)
 	return (RZ);
 }
 
-float3			calc_normal(float3 P, t_obj obj)
+float3			calc_normal(float3 P, float3 D, t_obj obj)
 {
-	float3		proj;
 	float3		OP = {obj.pos.x, obj.pos.y, obj.pos.z};
 	float3		OD = {obj.dir.x, obj.dir.y, obj.dir.z};
 	float3		N;
 	float3		T;
 
 	N = P - OP;
-	if (obj.type == PLANE)
+	if (obj.type == PLANE && dot(D, OD) < 0)
 		return (OD / fast_length(OD));
+	else if (obj.type == PLANE)
+		return (-OD / fast_length(OD));
 	else if (obj.type == CYLINDER || obj.type == CONE)
 	{
 		T = (OD - OP) / fast_length(OD - OP);
-		proj = T * dot(N, T);
-		N -= proj;
+		N -= T * dot(N, T);
 		N /= fast_length(N);
 	}
 	else if (obj.type == SPHERE)
@@ -353,7 +353,7 @@ t_uint			trace_ray(float3 O, float3 D, float min, float max,
 		if (obj_data.obj.type < 0)
 			break ;
 		P = O + obj_data.closest_t * D;
-		N = calc_normal(P, obj_data.obj);
+		N = calc_normal(P, D, obj_data.obj);
 
 		light_coef = compute_lighting(P, N, O, -D, obj_data.obj.spec, light, objs);
 		light_coef > 1 ? light_coef = 1 : 0;
@@ -394,7 +394,7 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 	t_uint		color[SMOOTH_LEVEL * SMOOTH_LEVEL];
 	float3		O;
 	float3		D;
-	float3		CR = (float3){cam_rot.rx, cam_rot.ry, cam_rot.rz};
+	float3		CR = {cam_rot.rx, cam_rot.ry, cam_rot.rz};
 
 	O = (float3){cam_pos.x, cam_pos.y, cam_pos.z};
 	while (++itx < SMOOTH_LEVEL)

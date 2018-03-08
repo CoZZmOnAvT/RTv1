@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render.h                                           :+:      :+:    :+:   */
+/*   render.h.cl                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -56,7 +56,7 @@ t_uint		avg_color(t_uint arr[], t_uint num);
 float3		canvas_to_viewport(float x, float y, t_viewport vwp,
 								t_uint w_width, t_uint w_height);
 float3		rotate_point(float3 rot, float3 D);
-float3		calc_normal(float3 P, t_obj obj);
+float3		calc_normal(float3 P, float3 D, t_obj obj);
 float3		sum_colors(float3 a, float3 b);
 float		fix_limits(float3 O, float3 D, float3 Va, t_obj obj, float ints);
 
