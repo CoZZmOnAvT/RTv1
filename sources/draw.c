@@ -6,7 +6,7 @@
 /*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:32:50 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/08 17:08:10 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/08 21:09:50 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,5 @@ void		render_scene(t_env *env)
 		(size_t[3]){env->win->w, env->win->h, 0}, NULL, 0, NULL, NULL);
 	err ? ft_err_handler("OpenCL", "Fail!", 0, 1) : 0;
 	err = clEnqueueReadBuffer(env->cl.queue, env->cam->kl.mem, CL_TRUE, 0,
-		env->win->w * env->win->h * 4, env->win->surf->pixels, 0, NULL, NULL);
+		env->win->surf->pitch * env->win->h, env->win->surf->pixels, 0, NULL, NULL);
 }
