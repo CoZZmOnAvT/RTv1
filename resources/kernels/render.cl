@@ -43,7 +43,7 @@ t_uint		avg_color(t_uint arr[], t_uint num)
 	return (r * 0x10000 + g * 0x100 + b);
 }
 
-float3		canDs_to_viewport(float x, float y, t_viewport vwp, t_uint w_width, t_uint w_height)
+float3		canvas_to_viewport(float x, float y, t_viewport vwp, t_uint w_width, t_uint w_height)
 {
 	return ((float3){x * vwp.w / w_width, y * vwp.h / w_height, vwp.dist});
 }
@@ -402,7 +402,7 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 		ity = -1;
 		while (++ity < SMOOTH_LEVEL)
 		{
-			D = rotate_point(CR, canDs_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
+			D = rotate_point(CR, canvas_to_viewport(x + (itx + 0.5) / SMOOTH_LEVEL,
 								y + (ity + 0.5) / SMOOTH_LEVEL, vwp, w_width, w_height));
 			color[ity * SMOOTH_LEVEL + itx] = trace_ray(O, D, 1, INFINITY, objs, light);
 		}
