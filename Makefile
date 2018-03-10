@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
+#    By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/03/06 14:38:28 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/10 15:24:07 by cozzmonavt       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,13 @@ NAME		=	RTv1
 
 CC			=	gcc
 
-CFLAGS		=	-Wextra -Werror -Wall -g3 -O3
+OS			=	$(shell uname)
+
+ifeq ($(OS), Linux)
+	CFLAGS		=	-Wextra -Wall -O3 -g3
+else
+	CFLAGS		=	-Wextra -Werror -Wall -O3 -g3
+endif
 
 HDRSDIR		=	./includes
 
@@ -34,21 +40,26 @@ LIBFOLDER	=	./libraries
 LIBSDEPS	=	$(addprefix $(LIBFOLDER)/, libft/libft.a sgl/libsgl.a)
 
 INCLUDES	=	-I./includes
-INCLUDES	+=	-I./frameworks/SDL2.framework/Headers
-INCLUDES	+=	-I./frameworks/SDL2_ttf.framework/Headers
-INCLUDES	+=	-I./frameworks/SDL2_image.framework/Headers
-INCLUDES	+=	-I./frameworks/SDL2_mixer.framework/Headers
-INCLUDES	+=	-F./frameworks
 INCLUDES	+=	$(addprefix -I$(LIBFOLDER)/, libft sgl)
 
+ifeq ($(OS), Linux)
+	FRAMEWORKS = `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm -lOpenCL
+else
+	INCLUDES	+=	-I./frameworks/SDL2.framework/Headers
+	INCLUDES	+=	-I./frameworks/SDL2_ttf.framework/Headers
+	INCLUDES	+=	-I./frameworks/SDL2_image.framework/Headers
+	INCLUDES	+=	-I./frameworks/SDL2_mixer.framework/Headers
+	INCLUDES	+=	-F./frameworks
+
+	FRAMEWDIR	=	frameworks
+
+	FRAMEWORKS	=	$(addprefix -F./, $(FRAMEWDIR))
+	FRAMEWORKS	+=	$(addprefix -rpath ./, $(FRAMEWDIR))
+	FRAMEWORKS	+=	-framework OpenGL -framework AppKit -framework OpenCl		\
+					-framework SDL2 -framework SDL2_ttf -framework SDL2_image -framework SDL2_mixer
+endif
+
 LIBRARIES	=	$(addprefix -L$(LIBFOLDER)/, libft sgl) -lft -lsgl
-
-FRAMEWDIR	=	frameworks
-
-FRAMEWORKS	=	$(addprefix -F./, $(FRAMEWDIR))
-FRAMEWORKS	+=	$(addprefix -rpath ./, $(FRAMEWDIR))
-FRAMEWORKS	+=	-framework OpenGL -framework AppKit -framework OpenCl		\
-				-framework SDL2 -framework SDL2_ttf -framework SDL2_image -framework SDL2_mixer
 
 all: lib $(NAME)
 

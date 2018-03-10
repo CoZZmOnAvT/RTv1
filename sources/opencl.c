@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   opencl.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/26 21:20:01 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:41:49 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/10 16:13:46 by cozzmonavt       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,21 @@ void		cl_reinit_mem(t_cl_core *cl, cl_mem *mem, size_t size, void *ptr)
 
 void		cl_init(t_cl_core *cl, cl_device_type dev_type)
 {
-	cl_int	err;
+	cl_int			err;
+	t_uint			n_o_p;
+	cl_platform_id	*p_ids;
+	int				i;
 
-	err = clGetDeviceIDs(NULL, dev_type, 1, &cl->device, NULL);
-	err ? err = clGetDeviceIDs(NULL, CL_DEVICE_TYPE_DEFAULT,
+	err = clGetPlatformIDs(0, NULL, &n_o_p);
+	err ? ft_err_handler("OpenCl", "Can't get platform id's!", 0, 1) : 0;
+	p_ids = malloc(sizeof(cl_platform_id) * n_o_p);
+	err = clGetPlatformIDs(n_o_p, p_ids, NULL);
+	err ? ft_err_handler("OpenCl", "Can't get platform id's!", 0, 1) : 0;
+	i = -1;
+	while (++i < (int)n_o_p)
+		if (!(err = clGetDeviceIDs(p_ids[i], dev_type, 1, &cl->device, NULL)))
+			break ;
+	err ? err = clGetDeviceIDs(p_ids[0], CL_DEVICE_TYPE_DEFAULT,
 			1, &cl->device, NULL) : 0;
 	err ? ft_err_handler("OpenCl", "Can't get device!", 0, 1) : 0;
 	cl->context = clCreateContext(0, 1, &cl->device, NULL, NULL, &err);

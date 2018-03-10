@@ -391,7 +391,7 @@ render_scene(__global t_uint *pixels, t_point cam_pos, t_rotate cam_rot,
 	int			y = w_height / 2 - screen_y;
 	int			itx = -1;
 	int			ity = -1;
-	t_uint		color[SMOOTH_LEVEL * SMOOTH_LEVEL];
+	t_uint		color[SMOOTH_LEVEL * SMOOTH_LEVEL] = {0};
 	float3		O;
 	float3		D;
 	float3		CR = {cam_rot.rx, cam_rot.ry, cam_rot.rz};

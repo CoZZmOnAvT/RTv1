@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
+#    By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/03/06 17:45:28 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/10 15:28:27 by cozzmonavt       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,13 @@ NAME		=	libsgl.a
 
 CC			=	gcc
 
-CFLAGS		=	-Wextra -Werror -Wall -O3 -g3
+OS			=	$(shell uname)
+
+ifeq ($(OS), Linux)
+	CFLAGS		=	-Wextra -Wall -O3 -g3
+else
+	CFLAGS		=	-Wextra -Werror -Wall -O3 -g3
+endif
 
 HDRS		=	sgl.h sgl_private.h
 
@@ -28,18 +34,29 @@ OBJDIR		=	obj
 
 OBJ			=	$(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
 
-INCLUDES	=	-I ../libft
-INCLUDES	+=	-I../../frameworks/SDL2.framework/Headers
-INCLUDES	+=	-I../../frameworks/SDL2_ttf.framework/Headers
-INCLUDES	+=	-I../../frameworks/SDL2_image.framework/Headers
-INCLUDES	+=	-I../../frameworks/SDL2_mixer.framework/Headers
-INCLUDES	+=	-F../../frameworks
+LIBFTPATH	=	../libft
+
+INCLUDES	=	-I $(LIBFTPATH)
+
+ifeq ($(OS), Linux)
+	INCLUDES	+= `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
+else
+	INCLUDES	+=	-I../../frameworks/SDL2.framework/Headers
+	INCLUDES	+=	-I../../frameworks/SDL2_ttf.framework/Headers
+	INCLUDES	+=	-I../../frameworks/SDL2_image.framework/Headers
+	INCLUDES	+=	-I../../frameworks/SDL2_mixer.framework/Headers
+	INCLUDES	+=	-F../../frameworks
+endif
 
 all: $(NAME)
 
 $(NAME): $(OBJDIR) $(OBJ) $(OBJM) $(HDRS)
 	@printf "\033[32m[Creating $(NAME)].......\033[0m"
-	@ar rc $(NAME) $(OBJ)
+	@mkdir -p tmp
+	@cp -r $(LIBFTPATH)/libft.a tmp
+	@cd tmp && ar -x libft.a
+	@ar rc $(NAME) $(OBJ) tmp/*.o
+	@rm -rf tmp
 	@ranlib $(NAME)
 	@printf "\033[32m[DONE]\033[0m\n"
 

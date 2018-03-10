@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
+#    By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/01 13:50:42 by pgritsen          #+#    #+#              #
-#    Updated: 2018/03/05 21:03:08 by pgritsen         ###   ########.fr        #
+#    Updated: 2018/03/10 15:10:03 by cozzmonavt       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,13 @@ NAME		= 	libft.a
 
 CC			= 	gcc
 
-CFLAGS		= 	-Wextra -Werror -Wall -O3 -g3
+OS			=	$(shell uname)
+
+ifeq ($(OS), Linux)
+	CFLAGS		=	-Wextra -Wall -O3 -g3
+else
+	CFLAGS		=	-Wextra -Werror -Wall -O3 -g3
+endif
 
 SRCS		= 	ft_lstnew.c ft_strcat.c ft_strncpy.c ft_memalloc.c ft_strchr.c		\
 				ft_strnequ.c ft_memccpy.c ft_strclr.c ft_strnew.c ft_atoi.c			\

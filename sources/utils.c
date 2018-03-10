@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/23 14:16:00 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/08 19:21:43 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/10 15:55:15 by cozzmonavt       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void		init_env(t_env *e)
 	e->cam->vwp = ft_memalloc(sizeof(t_viewport));
 	resize_viewport(e->cam->vwp, e->win->w, e->win->h);
 	e->cam->vwp->dist = 1;
-	cl_init(&e->cl, CL_DEVICE_TYPE_GPU);
+	cl_init(&e->cl, CL_DEVICE_TYPE_CPU);
 	cl_parse_kernel(&e->cl, &e->cam->kl,
 		KERNEL_FOLDER"render.cl", "render_scene");
 	cl_reinit_mem(&e->cl, &e->cam->kl.mem, e->win->surf->pitch * e->win->h, 0);

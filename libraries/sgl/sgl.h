@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sgl.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:45:23 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/10 15:12:15 by cozzmonavt       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,19 @@
 # define SGL_H
 
 # include "libft.h"
-# include "SDL.h"
-# include "SDL_ttf.h"
-# include "SDL_image.h"
-# include "SDL_mixer.h"
+
+# ifdef linux
+#  include <SDL2/SDL.h>
+#  include <SDL2/SDL_ttf.h>
+#  include <SDL2/SDL_image.h>
+#  include <SDL2/SDL_mixer.h>
+# else
+#  include "SDL.h"
+#  include "SDL_ttf.h"
+#  include "SDL_image.h"
+#  include "SDL_mixer.h"
+# endif
+
 
 # define ICON_PATH "./resources/images/icon.png"
 # define FONT_PATH "./resources/fonts/"

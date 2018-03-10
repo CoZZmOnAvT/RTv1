@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rtv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 13:43:42 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/06 17:42:04 by pgritsen         ###   ########.fr       */
+/*   Updated: 2018/03/10 15:32:04 by cozzmonavt       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,15 @@
 # include <stdio.h>
 # include <time.h>
 # include <errno.h>
-# include <OpenCl/OpenCl.h>
+
+# define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+# ifdef __APPLE__
+#  include <OpenCL/opencl.h>
+# else
+#  include <CL/cl.h>
+#  include <fcntl.h>
+# endif
+
 # include "sgl.h"
 # include "structures.h"
 
