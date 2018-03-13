@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sgl.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
+/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 17:31:29 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/10 15:12:15 by cozzmonavt       ###   ########.fr       */
+/*   Updated: 2018/03/13 16:19:34 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@
 #  include "SDL_image.h"
 #  include "SDL_mixer.h"
 # endif
-
 
 # define ICON_PATH "./resources/images/icon.png"
 # define FONT_PATH "./resources/fonts/"
