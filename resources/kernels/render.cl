@@ -310,7 +310,7 @@ float		compute_lighting(float3 P, float3 N, float3 O, float3 V, int s,
 
 			if (dot(V, N) < 0)
 				continue ;
-			shadow_obj = closest_intersection(P, L, 0.001F, 1.0F, objs);
+			shadow_obj = closest_intersection(P, L, 0.001F, 0.99F, objs);
 			if (shadow_obj.obj.type >= 0)
 				continue ;
 

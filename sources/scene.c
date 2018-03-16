@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scene.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+        */
+/*   By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/02 20:30:44 by pgritsen          #+#    #+#             */
-/*   Updated: 2018/03/10 15:15:47 by cozzmonavt       ###   ########.fr       */
+/*   Updated: 2018/03/16 18:11:45 by pgritsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void			read_object(t_env *env, char *data, int index)
 {
 	char	**arr;
 
+	!data ? ft_err_handler("Object broken!", 0, 0, 1) : 0;
 	if (count_splited((arr = ft_strsplit(data, ','))) != 7)
 		ft_err_handler("Object broken!", 0, 0, 1);
 	ft_memdel((void **)&data);
@@ -36,6 +37,7 @@ static void			read_light(t_env *env, char *data, int index)
 {
 	char	**arr;
 
+	!data ? ft_err_handler("Light broken!", 0, 0, 1) : 0;
 	if (count_splited((arr = ft_strsplit(data, ','))) != 3)
 		ft_err_handler("Light broken!", 0, 0, 1);
 	ft_memdel((void **)&data);
