@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cozzmonavt <cozzmonavt@student.42.fr>      +#+  +:+       +#+         #
+#    By: pgritsen <pgritsen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/10 17:05:19 by pgritsen          #+#    #+#              #
-#    Updated: 2018/03/10 15:24:07 by cozzmonavt       ###   ########.fr        #
+#    Updated: 2018/03/16 19:34:59 by pgritsen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,7 +65,7 @@ all: lib $(NAME)
 
 $(NAME): $(OBJDIR) $(OBJ) $(HDRS) $(LIBSDEPS)
 	@printf "\n\033[32m[Creating $(NAME)].......\033[0m"
-	@$(CC) $(CFLAGS) -g -o $(NAME) $(OBJ) $(LIBRARIES) $(FRAMEWORKS)
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBRARIES) $(FRAMEWORKS)
 	@printf "\033[32m[DONE]\033[0m\n"
 
 $(OBJDIR):
