@@ -91,7 +91,10 @@ float3			calc_normal(float3 P, float3 D, t_obj obj)
 		return (-OD / fast_length(OD));
 	else if (obj.type == CYLINDER || obj.type == CONE)
 	{
-		T = (OD - OP) / fast_length(OD - OP);
+		if (obj.type == CONE)
+			T = (OD - P) / fast_length(OD - P);
+		else if (obj.type == CYLINDER)
+			T = (OD - OP) / fast_length(OD - OP);
 		N -= T * dot(N, T);
 		N /= fast_length(N);
 	}
